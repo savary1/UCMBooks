@@ -16,14 +16,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
+                case R.id.navigation_libreria:
+                    mTextMessage.setText(R.string.title_libreria);
                     return true;
-                case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
+                case R.id.navigation_buscar:
+                    mTextMessage.setText(R.string.title_buscar);
                     return true;
-                case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                case R.id.navigation_leidos:
+                    mTextMessage.setText(R.string.title_leidos);
                     return true;
             }
             return false;
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu, this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.bottom_nav_menu, menu);
+        getMenuInflater().inflate(R.menu.app_menu, menu);
         return true;
     }
 
