@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
+    private LibreriaFragment libreria = new LibreriaFragment();
+    private BuscarFragment buscar = new BuscarFragment();
+    private LeidosFragment leidos = new LeidosFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +23,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setSupportActionBar(myToolbar);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
-        LibreriaFragment firstFragment = new LibreriaFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, this.libreria).commit();
     }
 
     @Override
@@ -36,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (fragment != null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, fragment);
-            transaction.addToBackStack(null);
             transaction.commit();
             return true;
         }
@@ -50,15 +51,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         switch (menuItem.getItemId()) {
             case R.id.navigation_libreria:
-                fragment = new LibreriaFragment();
+                fragment = this.libreria;
                 break;
 
             case R.id.navigation_buscar:
-                fragment = new BuscarFragment();
+                fragment = this.buscar;
                 break;
 
             case R.id.navigation_leidos:
-                fragment = new LeidosFragment();
+                fragment = this.leidos;
                 break;
         }
 
