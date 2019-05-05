@@ -27,6 +27,20 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     FR_TYPE currentFragment = FR_TYPE.LIBRERIA;
 
+    private class OnQueryTextListener implements SearchView.OnQueryTextListener{
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            searchOnline(query);
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            searchOnline(newText);
+            return false;
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 // Assumes current activity is the searchable activity
                 searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
                 searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+                searchView.setOnQueryTextListener(new OnQueryTextListener());
                 break;
             }
             default:
@@ -99,5 +114,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         invalidateOptionsMenu();
 
         return switchFragment(fragment);
+    }
+
+    private void searchOnline(String query){
+        System.out.println("Busqueda realizada");
     }
 }
