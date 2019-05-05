@@ -1,17 +1,27 @@
 package fdi.pad.ucmbooks;
 
 import android.os.Bundle;
+
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.support.annotation.NonNull;
 import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.app.SearchManager;
 import android.content.Context;
 import android.support.v7.widget.SearchView;
+
+import android.support.annotation.NonNull;
+
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
 
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
@@ -117,6 +127,26 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void searchOnline(String query){
-        System.out.println("Busqueda realizada");
+        String apiKey = "ZjAhPX6VC8YMHCZIO5w6g";
+        String urlText = "https://www.goodreads.com/search.xml?key=" + apiKey + "&q=" + query;
+
+        try {
+            URL url = new URL(urlText);
+            URLConnection conn = url.openConnection();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(conn.getInputStream());
+
+        NodeList nodes = doc.getElementsByTagName(/*tag from xml file*/);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element element = (Element) nodes.item(i);
+            NodeList title = element.getElementsByTagName(/*item within the tag*/);
+            Element line = (Element) title.item(0);
+            phoneNumberList.add(line.getTextContent());
+        }
     }
 }
