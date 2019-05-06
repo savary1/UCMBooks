@@ -1,5 +1,6 @@
 package fdi.pad.ucmbooks;
 
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import java.lang.ref.WeakReference;
@@ -17,9 +18,12 @@ import android.support.v7.widget.SearchView;
 
 import android.support.annotation.NonNull;
 
+import android.graphics.Bitmap;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -56,16 +60,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
-    private static class AsyncServerRequest extends AsyncTask<String, Void, String[]> {
+    private static class AsyncServerRequest extends AsyncTask<String, Void, ArrayList<Libro>> {
         private WeakReference<MainActivity> activityReference;
 
         AsyncServerRequest(MainActivity context){
             activityReference = new WeakReference<>(context);
         }
         @Override
-        public String[] doInBackground(String... search){
+        public ArrayList<Libro> doInBackground(String... search){
 
-            String[] results = new String[10];
+            ArrayList<Libro> listaLibros = new ArrayList<>();
             String apiKey = "ZjAhPX6VC8YMHCZIO5w6g";
             String urlText = "https://www.goodreads.com/search.xml?key=" + apiKey + "&q=" + search[0];
 
@@ -75,20 +79,34 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 Document doc = builder.parse(conn.getInputStream());
-                NodeList nodes = doc.getElementsByTagName("best_book");
+                NodeList nodes = doc.getElementsByTagName("work");
                 for (int i = 0; i < nodes.getLength() && i < 10; i++) {
-                    Element element = (Element) nodes.item(i);
-                    String tmp = "Title: " + element.getElementsByTagName("title").item(0).getTextContent();
-                    results[i] = tmp;
+                    Element entry = (Element) nodes.item(i);
+                    NodeList tmp = entry.getElementsByTagName("best_book");
+                    Element entryLibro = (Element) tmp.item(0);
+                    tmp = entryLibro.getElementsByTagName("author");
+                    Element entryAutor = (Element) tmp.item(0);
+                    Libro nuevo = new Libro();
+                    nuevo.setTitulo(entryLibro.getElementsByTagName("title").item(0).getTextContent());
+                    nuevo.setIdLibro(entryLibro.getElementsByTagName("id").item(0).getTextContent());
+                    nuevo.setAutor(entryAutor.getElementsByTagName("name").item(0).getTextContent());
+                    nuevo.setIdAutor(entryAutor.getElementsByTagName("id").item(0).getTextContent());
+                    nuevo.setRating(entry.getElementsByTagName("average_rating").item(0).getTextContent());
+                    nuevo.setImageURL(entryLibro.getElementsByTagName("image_url").item(0).getTextContent());
+                    URL imageurl = new URL(entryLibro.getElementsByTagName("image_url").item(0).getTextContent());
+                    Bitmap image = BitmapFactory.decodeStream(imageurl.openConnection().getInputStream());
+                    nuevo.setImage(image);
+                    nuevo.setImageLoaded(true);
+                    listaLibros.add(nuevo);
                 }
             } catch (IOException | ParserConfigurationException | SAXException e){
                 e.printStackTrace();
             }
-            return results;
+            return listaLibros;
         }
 
         @Override
-        protected void onPostExecute(String[] v) {
+        protected void onPostExecute(ArrayList<Libro> v) {
             MainActivity activity = activityReference.get();
             if(activity == null || activity.isFinishing()) return;
             activity.searchNotifier(v);
@@ -174,9 +192,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         request.execute(query);
     }
 
-    private void searchNotifier(String[] results){
-        for(int i = 0; i < 10; i++){
-            System.out.println(results[i]);
+    private void searchNotifier(ArrayList<Libro> results){
+        for(int i = 0; i < results.size(); i++){
+            System.out.println(results.get(i).getTitulo());
         }
     }
 }
