@@ -1,6 +1,8 @@
 package fdi.pad.ucmbooks;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import java.lang.ref.WeakReference;
 
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -21,12 +23,16 @@ import java.net.URLConnection;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
-    private Toolbar myToolbar;
     private LibreriaFragment libreria = new LibreriaFragment();
     private BuscarFragment buscar = new BuscarFragment();
     private LeidosFragment leidos = new LeidosFragment();
@@ -46,8 +52,46 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         @Override
         public boolean onQueryTextChange(String newText) {
-            searchOnline(newText);
             return false;
+        }
+    }
+
+    private static class AsyncServerRequest extends AsyncTask<String, Void, String[]> {
+        private WeakReference<MainActivity> activityReference;
+
+        AsyncServerRequest(MainActivity context){
+            activityReference = new WeakReference<>(context);
+        }
+        @Override
+        public String[] doInBackground(String... search){
+
+            String[] results = new String[10];
+            String apiKey = "ZjAhPX6VC8YMHCZIO5w6g";
+            String urlText = "https://www.goodreads.com/search.xml?key=" + apiKey + "&q=" + search[0];
+
+            try {
+                URL url = new URL(urlText);
+                URLConnection conn = url.openConnection();
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                Document doc = builder.parse(conn.getInputStream());
+                NodeList nodes = doc.getElementsByTagName("best_book");
+                for (int i = 0; i < nodes.getLength() && i < 10; i++) {
+                    Element element = (Element) nodes.item(i);
+                    String tmp = "Title: " + element.getElementsByTagName("title").item(0).getTextContent();
+                    results[i] = tmp;
+                }
+            } catch (IOException | ParserConfigurationException | SAXException e){
+                e.printStackTrace();
+            }
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(String[] v) {
+            MainActivity activity = activityReference.get();
+            if(activity == null || activity.isFinishing()) return;
+            activity.searchNotifier(v);
         }
     }
 
@@ -56,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myToolbar = findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
@@ -67,8 +111,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu, this adds items to the action bar if it is present.
 
-        switch(currentFragment) {
-            case BUSCAR:{
+            if(currentFragment == FR_TYPE.BUSCAR) {
                 MenuInflater inflater = getMenuInflater();
                 inflater.inflate(R.menu.search_menu, menu);
 
@@ -79,11 +122,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
                 searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
                 searchView.setOnQueryTextListener(new OnQueryTextListener());
-                break;
             }
-            default:
+            else {
                 getMenuInflater().inflate(R.menu.app_menu, menu);
-        }
+            }
+
 
         return true;
     }
@@ -127,26 +170,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void searchOnline(String query){
-        String apiKey = "ZjAhPX6VC8YMHCZIO5w6g";
-        String urlText = "https://www.goodreads.com/search.xml?key=" + apiKey + "&q=" + query;
+        AsyncServerRequest request = new AsyncServerRequest(this);
+        request.execute(query);
+    }
 
-        try {
-            URL url = new URL(urlText);
-            URLConnection conn = url.openConnection();
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(conn.getInputStream());
-
-        NodeList nodes = doc.getElementsByTagName(/*tag from xml file*/);
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Element element = (Element) nodes.item(i);
-            NodeList title = element.getElementsByTagName(/*item within the tag*/);
-            Element line = (Element) title.item(0);
-            phoneNumberList.add(line.getTextContent());
+    private void searchNotifier(String[] results){
+        for(int i = 0; i < 10; i++){
+            System.out.println(results[i]);
         }
     }
 }
