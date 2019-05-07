@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private LibreriaFragment libreria = new LibreriaFragment();
     private BuscarFragment buscar = new BuscarFragment();
     private LeidosFragment leidos = new LeidosFragment();
+    public static Context mainContext;
 
     private enum FR_TYPE{
         LIBRERIA, BUSCAR, LEIDOS
@@ -86,18 +87,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     Element entryLibro = (Element) tmp.item(0);
                     tmp = entryLibro.getElementsByTagName("author");
                     Element entryAutor = (Element) tmp.item(0);
-                    Libro nuevo = new Libro();
-                    nuevo.setTitulo(entryLibro.getElementsByTagName("title").item(0).getTextContent());
-                    nuevo.setIdLibro(entryLibro.getElementsByTagName("id").item(0).getTextContent());
-                    nuevo.setAutor(entryAutor.getElementsByTagName("name").item(0).getTextContent());
-                    nuevo.setIdAutor(entryAutor.getElementsByTagName("id").item(0).getTextContent());
-                    nuevo.setRating(entry.getElementsByTagName("average_rating").item(0).getTextContent());
-                    nuevo.setImageURL(entryLibro.getElementsByTagName("image_url").item(0).getTextContent());
-                    URL imageurl = new URL(entryLibro.getElementsByTagName("image_url").item(0).getTextContent());
-                    Bitmap image = BitmapFactory.decodeStream(imageurl.openConnection().getInputStream());
-                    nuevo.setImage(image);
-                    nuevo.setImageLoaded(true);
+                    Libro nuevo = new Libro(
+                            mainContext, //Funciona?
+                            entryLibro.getElementsByTagName("title").item(0).getTextContent(),
+                            entryLibro.getElementsByTagName("id").item(0).getTextContent(),
+                            entryAutor.getElementsByTagName("name").item(0).getTextContent(),
+                            entryAutor.getElementsByTagName("id").item(0).getTextContent(),
+                            entry.getElementsByTagName("average_rating").item(0).getTextContent(),
+                            BitmapFactory.decodeStream(new URL(entryLibro.getElementsByTagName("image_url").item(0).getTextContent()).openConnection().getInputStream()),
+                            entryLibro.getElementsByTagName("image_url").item(0).getTextContent()
+                    );
                     listaLibros.add(nuevo);
+                    //nuevo.buttonSeguir();
                 }
             } catch (IOException | ParserConfigurationException | SAXException e){
                 e.printStackTrace();
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, this.libreria).commit();
+        mainContext = this;
     }
 
     @Override
