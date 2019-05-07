@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return true;
     }
 
-    private boolean switchFragment(android.support.v4.app.Fragment fragment) {
+    private boolean switchFragment(Fragment fragment) {
         //switching fragment
         if (fragment != null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -196,5 +196,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         for(int i = 0; i < results.size(); i++){
             System.out.println(results.get(i).getTitulo());
         }
+        buscar.refreshList(results);
     }
 }
