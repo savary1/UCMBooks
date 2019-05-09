@@ -1,25 +1,25 @@
-package fdi.pad.ucmbooks;
+package fdi.pad.Libro;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
  * Esta clase se encarga de guardar las características de cada libro para que mostrarlas más tarde sea algo sencillo.
  * Además, permite procesar las imágenes y los datos del libro para poder modificarlos.
  * Esta clase se guarda en el dispositivo si el atributo "seguido" se encuentra a True
+ * Por motivos de seguridad, la clase solo es accesible desde el propio paquete donde se encuentra
  */
-public class Libro {
+class Libro {
 
     /** Título del libro */
     private String titulo;
@@ -29,12 +29,8 @@ public class Libro {
     private String autor;
     /** ID del autor. Valor único */
     private String idAutor;
-    /** Imagen asociada al libro */
-    private Drawable imagen;
     /** Nombre de la carpeta donde se va a guardar la imagen. No será la misma que la de esta clase (para no llenarla) */
     private String imageFolder;
-    /** Nombre de la imagen asociada al libro. Si no hay ningún nombre, será "Default.jpg" */
-    private String imageName;
     /** URL de la imagen. Obtenido de la API */
     private String imageURL;
     /** Imagen en formato Bitmap */
@@ -47,7 +43,7 @@ public class Libro {
     private boolean leido;
     /** Entero de 0 a 100 que refleja el porcentaje del libro que ha sido leído */
     private int porcentajeLeido; //Se podría usar en el futuro
-    /** True si el libro se ha seguido tras haberlo consultado en la api. Se pone a False cuando se consulta pero no se agrega.
+    /** True si el libro se ha seguido tras haberlo consultado en la api. No se debería poner a false.
      * Si está a True, "this" se guarda en el dispositivo. Si False, no se hace nada */
     private boolean seguido;
     /** Contexto */
@@ -56,7 +52,6 @@ public class Libro {
     /*
     ****************************************************************************************************************
     TODO Las pruebas necesarias para comprobar que todo funcione correctamente
-    TODO El método de update
     TODO Borrado de comentarios si las imágenes se guardan bien con el sistema actual
     ****************************************************************************************************************
     */
@@ -71,16 +66,14 @@ public class Libro {
      * @param idAutor ID asociada al autor. Valor único
      * @param rating Valoración del libro
      */
-    public Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating) {
+    Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating) {
         this.context = context;
         this.titulo = titulo;
         this.idLibro = idLibro;
         this.autor = autor;
         this.idAutor = idAutor;
         this.rating = rating;
-        this.imagen = null;
         this.imageURL = "";
-        this.imageName = "Default.jpg";
         this.image = null;
         this.imageLoaded = false;
         init();
@@ -96,37 +89,36 @@ public class Libro {
      * @param idAutor ID asociada al autor. Valor único
      * @param rating Valoración del libro
      * @param image Imagen en formato Bitmap. Se pasa este parámetro para poder guardarla en el dispositivo
-     * @param imageName Nombre de la imagen del libro. Interpretamos que cada imagen tiene un nombre único
      * @param imageURL URL de la imagen. Obtenida de la API
      */
-    public Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
-                 Bitmap image/*, String imageName*/, String imageURL) {
+    Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
+                 Bitmap image, String imageURL) {
         this.context = context;
         this.titulo = titulo;
         this.idLibro = idLibro;
         this.autor = autor;
         this.idAutor = idAutor;
         this.rating = rating;
-        //this.imagen = imagen;
         this.image = image;
-        //this.imageName = imageName + ".jpg";
         this.imageURL = imageURL;
-        this.image = null;
         this.imageLoaded = true;
         init();
     }
 
+    /**
+     * Función auxiliar
+     */
     private void init() {
         this.leido = false;
         this.porcentajeLeido = 0;
-        this.seguido = false;
-        this.imageFolder = "/Bookimages";
+        this.seguido = true;
+        this.imageFolder = "/Bookimages"; //TODO Quitar carpeta de imágenes si se visualizan correctamente con el sistema del Handler
     }
 
     /**
      * Si un libro se ha leído, se pone a true el atributo y a 100 el porcentaje leído
      */
-    public void libroLeido() {
+    void libroLeido() {
         this.leido = true;
         this.porcentajeLeido = 100;
     }
@@ -134,7 +126,7 @@ public class Libro {
     /**
      * Si un libro no se ha leído o se pone a false el atributo y a 0 el porcentaje leído
      */
-    public void libroNoLeido() {
+    void libroNoLeido() {
         this.leido = false;
         this.porcentajeLeido = 0;
     }
@@ -143,7 +135,7 @@ public class Libro {
      * Establece un porcentaje leído del libro. Si es 100 o menor que 0, se llama a los métodos que cambian el valor de leído
      * @param value El porcentaje leído. Si es mayor que 100, se pone a 100
      */
-    public void setPorcentajeLeido(int value) {
+    void setPorcentajeLeido(int value) {
         this.porcentajeLeido = value;
         if(this.porcentajeLeido >= 100) {
             this.porcentajeLeido = 100;
@@ -162,7 +154,7 @@ public class Libro {
      * Cuando se pulsa el botón de seguir libro, si ya estaba seguido se deja de seguir y si no, se sigue
      * @return Verdadero si se ha seguido el libro, falso en caso contrario
      */
-    public boolean buttonSeguir() {
+    boolean buttonSeguir() {
         return !this.seguido ? seguirLibro() : dejarDeSeguirLibro();
     }
 
@@ -173,8 +165,8 @@ public class Libro {
      */
     private boolean seguirLibro() {
         if(!this.seguido) {
-            if (!saveBook())
-                return false; //Si no se puede guardar la imagen, se devuelve falso
+            /*if (!saveBook())
+                return false; //Si no se puede guardar la imagen, se devuelve falso*/
             this.seguido = true; //Se pone seguido al final porque si no se realiza el guardado correctamente, no cuenta como seguido
             return true; //se devuelve true si se ha guardado y se ha seguido correctamente
         }
@@ -188,8 +180,8 @@ public class Libro {
      */
     private boolean dejarDeSeguirLibro() {
         if(this.seguido) {
-            if(!deleteBook())
-                return false; //Si no se ha borrado el libro, devuelve falso
+            /*if(!deleteBook())
+                return false; //Si no se ha borrado el libro, devuelve falso*/
             this.seguido = false; //A pear de que se borre de la memoria interna, el valor se actualiza para mostrar "this" si es necesario
             return true; //Se devuelve true si se ha borrado y se ha dejado de seguir correctamente
         }
@@ -261,54 +253,55 @@ public class Libro {
      * Guarda el libro en la memoria interna del teléfono
      * @return Verdadero si se ha guardado correctamente. Falso en caso contrario
      */
+    /*
     private boolean saveBook() {
         try {
-            FileOutputStream fos = context.openFileOutput(this.idLibro, Context.MODE_PRIVATE);
+            FileOutputStream fos = this.context.openFileOutput(this.idLibro, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             /*String s = this.titulo + "\n" + this.idLibro + "\n" + this.autor + "\n" + this.idAutor + "\n" +
                     this.imageName + "\n" + this.imageURL + "\n" + this.rating + "\n" + this.leido + "\n" +
                     this.porcentajeLeido;*/
             //fos.write(s.getBytes());
-            oos.writeObject(this.titulo);
+            /*oos.writeObject(this.titulo);
             oos.writeObject(this.idLibro);
             oos.writeObject(this.autor);
             oos.writeObject(this.idAutor);
-            oos.writeObject(this.imageName);
             oos.writeObject(this.imageURL);
             oos.writeObject(this.image);
             oos.writeObject(this.rating);
             oos.writeObject(this.leido);
             oos.close();
             fos.close();
+            //exitoGuardado();
             return true;
         }
         catch (FileNotFoundException e) {
             e.printStackTrace();
-            falloGuardado();
+            //falloGuardado();
         }
         catch (IOException e) {
             e.printStackTrace();
-            falloGuardado();
+            //falloGuardado();
         }
 
         return false;
-    }
+    }*/
 
     /**
      * Borra el libro de la memoria interna del teléfono
      * @return Verdadero si se ha borrado correctamente. Falso en caso contrario
      */
-    private boolean deleteBook() {
+    /*private boolean deleteBook() {
         File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + this.idLibro);
 
         if(file.delete()) {
-            exitoBorrado();
+            //exitoBorrado();
             return true;
         }
 
-        falloBorrado();
+        //falloBorrado();
         return false;
-    }
+    }*/
 
     /**
      * Mensaje de éxito si se ha guardado correctamente
@@ -338,51 +331,47 @@ public class Libro {
         Toast.makeText(this.context, "Error al dejar de seguir el libro. Prueba más tarde", Toast.LENGTH_SHORT).show();
     }
 
-    public String getTitulo() {
+    String getTitulo() {
         return titulo;
     }
 
-    public String getAutor() {
+    String getAutor() {
         return autor;
     }
 
-    public Drawable getImagen() {
-        return imagen;
-    }
-
-    public boolean isLeido() {
+    boolean isLeido() {
         return leido;
     }
 
-    public int getPorcentajeLeido() {
+    int getPorcentajeLeido() {
         return porcentajeLeido;
     }
 
-    public boolean isSeguido() {
+    boolean isSeguido() {
         return seguido;
     }
 
-    public String getIdLibro() {
+    String getIdLibro() {
         return idLibro;
     }
 
-    public String getIdAutor() {
+    String getIdAutor() {
         return idAutor;
     }
 
-    public String getRating() {
+    String getRating() {
         return rating;
     }
 
-    public String getImageURL() {
+    String getImageURL() {
         return imageURL;
     }
 
-    public Bitmap getImage() {
+    Bitmap getImage() {
         return image;
     }
 
-    public Boolean getImageLoaded() {
+    Boolean getImageLoaded() {
         return imageLoaded;
     }
 }
