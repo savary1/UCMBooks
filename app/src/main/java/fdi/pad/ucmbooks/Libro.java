@@ -96,9 +96,9 @@ public class Libro {
      * @param idAutor ID asociada al autor. Valor único
      * @param rating Valoración del libro
      * @param image Imagen en formato Bitmap. Se pasa este parámetro para poder guardarla en el dispositivo
-     * @param imageName Nombre de la imagen del libro. Interpretamos que cada imagen tiene un nombre único
      * @param imageURL URL de la imagen. Obtenida de la API
      */
+    /*@param imageName Nombre de la imagen del libro. Interpretamos que cada imagen tiene un nombre único*/
     public Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
                  Bitmap image/*, String imageName*/, String imageURL) {
         this.context = context;

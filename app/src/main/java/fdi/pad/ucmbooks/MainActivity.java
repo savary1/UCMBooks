@@ -37,6 +37,7 @@ import org.xml.sax.SAXException;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
+
     private LibreriaFragment libreria = new LibreriaFragment();
     private BuscarFragment buscar = new BuscarFragment();
     private LeidosFragment leidos = new LeidosFragment();
@@ -123,6 +124,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setSupportActionBar(myToolbar);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
+        /*Para probar que el fragmento libreria funciona*/
+        Libro prueba = new Libro(this, "Titulo", "id", "Autor", "IDAutor", "Rating");
+        Libro prueba2 = new Libro(this, "Titulo2", "id2", "Autor2", "IDAutor2", "Rating2");
+        ArrayList<Libro> listaPrueba = new ArrayList<>();
+        listaPrueba.add(prueba);
+        listaPrueba.add(prueba2);
+        this.libreria.setLista(listaPrueba);
+        this.leidos.setLista(listaPrueba);
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, this.libreria).commit();
         mainContext = this;
     }

@@ -34,14 +34,6 @@ public class BuscarFragment extends Fragment {
         rv.setAdapter(rvAdapter);
         return view;
     }
-    /*
-    View v = inflater.inflate(R.layout.fragment_genres, container, false);
-    recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
-recyclerView.setHasFixedSize(true);
-    layoutManager = new LinearLayoutManager(getActivity());
-recyclerView.setLayoutManager(layoutManager);
-return v;
-*/
 
     public void refreshList(ArrayList<Libro> libros){
         RecyclerView rv = (RecyclerView) getView().findViewById(R.id.searched_list_view);
