@@ -3,6 +3,7 @@ package fdi.pad.Libro;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.text.format.DateFormat;
 import android.widget.Toast;
 
 import java.io.File;
@@ -12,6 +13,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Esta clase se encarga de guardar las características de cada libro para que mostrarlas más tarde sea algo sencillo.
@@ -30,7 +35,7 @@ class Libro {
     /** ID del autor. Valor único */
     private String idAutor;
     /** Nombre de la carpeta donde se va a guardar la imagen. No será la misma que la de esta clase (para no llenarla) */
-    private String imageFolder;
+    private String imageFolder; //TODO Quitar este atributo si no es necesario
     /** URL de la imagen. Obtenido de la API */
     private String imageURL;
     /** Imagen en formato Bitmap */
@@ -39,13 +44,23 @@ class Libro {
     private Boolean imageLoaded;
     /** Puntuación del libro */
     private String rating;
+
     /** True si el libro se ha leído, False en caso contrario */
     private boolean leido;
+    /** Fecha en la que se marcó el libro como leído. La hora es indiferente */
+    private String fechaLeido;
     /** Entero de 0 a 100 que refleja el porcentaje del libro que ha sido leído */
     private int porcentajeLeido; //Se podría usar en el futuro
     /** True si el libro se ha seguido tras haberlo consultado en la api. No se debería poner a false.
      * Si está a True, "this" se guarda en el dispositivo. Si False, no se hace nada */
     private boolean seguido;
+    /** Fecha en la que se dio a seguir al libro. La hora es indiferente */
+    private String fechaSeguido;
+    /** Review que el usuario hace del libro */
+    private String userReview;
+    /** Nota personal que el usuario ha dado al libro. Va de 1 a 10 */
+    private Integer userRating;
+
     /** Contexto */
     private Context context;
 
@@ -92,7 +107,7 @@ class Libro {
      * @param imageURL URL de la imagen. Obtenida de la API
      */
     Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
-                 Bitmap image, String imageURL) {
+          Bitmap image, String imageURL) {
         this.context = context;
         this.titulo = titulo;
         this.idLibro = idLibro;
@@ -110,9 +125,12 @@ class Libro {
      */
     private void init() {
         this.leido = false;
+        this.fechaSeguido = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         this.porcentajeLeido = 0;
         this.seguido = true;
         this.imageFolder = "/Bookimages"; //TODO Quitar carpeta de imágenes si se visualizan correctamente con el sistema del Handler
+        this.userRating = null;
+        this.userReview = "";
     }
 
     /**
@@ -121,6 +139,7 @@ class Libro {
     void libroLeido() {
         this.leido = true;
         this.porcentajeLeido = 100;
+        this.fechaLeido = "Leido: " + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
     }
 
     /**
@@ -129,6 +148,7 @@ class Libro {
     void libroNoLeido() {
         this.leido = false;
         this.porcentajeLeido = 0;
+        this.fechaLeido = "Sin leer (por ahora) ;-)";
     }
 
     /**
@@ -186,6 +206,17 @@ class Libro {
             return true; //Se devuelve true si se ha borrado y se ha dejado de seguir correctamente
         }
         else return false; //Si el libro no estaba seguido, no se puede quitar de seguido
+    }
+
+    boolean stablishRating(int userRating) {
+        if(userRating < 0 || userRating > 10)
+            return false;
+        this.userRating = userRating;
+        return true;
+    }
+
+    void makeReview(String userReview) {
+        this.userReview = userReview;
     }
 
     /**
@@ -261,7 +292,7 @@ class Libro {
             /*String s = this.titulo + "\n" + this.idLibro + "\n" + this.autor + "\n" + this.idAutor + "\n" +
                     this.imageName + "\n" + this.imageURL + "\n" + this.rating + "\n" + this.leido + "\n" +
                     this.porcentajeLeido;*/
-            //fos.write(s.getBytes());
+    //fos.write(s.getBytes());
             /*oos.writeObject(this.titulo);
             oos.writeObject(this.idLibro);
             oos.writeObject(this.autor);
@@ -331,6 +362,10 @@ class Libro {
         Toast.makeText(this.context, "Error al dejar de seguir el libro. Prueba más tarde", Toast.LENGTH_SHORT).show();
     }
 
+    Context getContext() {
+        return context;
+    }
+
     String getTitulo() {
         return titulo;
     }
@@ -374,4 +409,21 @@ class Libro {
     Boolean getImageLoaded() {
         return imageLoaded;
     }
+
+    Integer getUserRating() {
+        return userRating;
+    }
+
+    String getUserReview() {
+        return userReview;
+    }
+
+    String getFechaLeido() {
+        return fechaLeido;
+    }
+
+    String getFechaSeguido() {
+        return fechaSeguido;
+    }
+
 }

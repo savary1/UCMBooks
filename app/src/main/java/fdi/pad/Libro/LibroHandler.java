@@ -13,7 +13,8 @@ import java.util.ArrayList;
 
 /**
  * Clase que gestiona todos los apartados de la lista de libros, así como su guardado o borrado de la memoria interna del teléfono.
- * Por motivos de seguridad, la clase solo es accesible desde el propio paquete donde se encuentra
+ * Por motivos de seguridad, la clase solo es accesible desde el propio paquete donde se encuentra.
+ * Esta clase no se usa para realizar operaciones sobre ella. Por eso, es conveniente usar los "getters" de la forma adecuada
  */
 class LibroHandler {
 
@@ -189,8 +190,31 @@ class LibroHandler {
         return getIndex(id) != -1;
     }
 
+    String getFechaSeguido(String id) {return getLibro(getIndex(id)).getFechaSeguido(); }
+
+    String getFechaLeido(String id) { return getLibro(getIndex(id)).getFechaLeido(); }
+
     boolean isLibroLeido(String id) {
         return getLibro(getIndex(id)).isLeido();
     }
+
+    ArrayList<Libro> getLibrosSeguidos() {
+        //Método trivial
+        ArrayList<Libro> a = new ArrayList<>();
+        for(int i = 0; i < this.libros.size(); ++i)
+            if(this.libros.get(i).isSeguido())
+                a.add(this.libros.get(i));
+        return a;
+    }
+
+    ArrayList<Libro> getLibrosLeidos() {
+        ArrayList<Libro> a = new ArrayList<>();
+        for(int i = 0; i < this.libros.size(); ++i)
+            if(this.libros.get(i).isLeido())
+                a.add(this.libros.get(i));
+        return a;
+    }
+
+
 
 }
