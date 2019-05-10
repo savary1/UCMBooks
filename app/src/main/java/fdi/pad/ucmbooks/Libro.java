@@ -111,7 +111,6 @@ public class Libro {
         this.image = image;
         //this.imageName = imageName + ".jpg";
         this.imageURL = imageURL;
-        this.image = null;
         this.imageLoaded = true;
         init();
     }
