@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import fdi.pad.buscarUI.RVAdapter;
+import fdi.pad.buscarUI.ButtonRVAdapter;
 
 
 public class LibreriaFragment extends Fragment {
@@ -34,19 +34,19 @@ public class LibreriaFragment extends Fragment {
         //with the fragment you want to inflate
         //like if the class is HomeFragment it should have R.layout.home_fragment
         //if it is DashboardFragment it should have R.layout.fragment_dashboard
-        View view = inflater.inflate(R.layout.fragment_buscar, container, false);
-        rv = view.findViewById(R.id.searched_list_view);
+        View view = inflater.inflate(R.layout.fragment_lista, container, false);
+        rv = view.findViewById(R.id.books_list_view);
         rvLayoutManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(rvLayoutManager);
-        rvAdapter = new RVAdapter(guardados);
+        rvAdapter = new ButtonRVAdapter(guardados, ButtonRVAdapter.TIPO_BRVA.SEGUIDO);
         rv.setAdapter(rvAdapter);
         return view;
     }
 
     public void refreshList(Libro libro){
         guardados.add(libro);
-        RecyclerView rv = (RecyclerView) getView().findViewById(R.id.searched_list_view);
-        RVAdapter adapter = new RVAdapter(guardados);
+        RecyclerView rv = (RecyclerView) getView().findViewById(R.id.books_list_view);
+        ButtonRVAdapter adapter = new ButtonRVAdapter(guardados, ButtonRVAdapter.TIPO_BRVA.SEGUIDO);
         rv.setAdapter(adapter);
     }
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
 
     @Override
     public void onBindViewHolder(BookViewHolder bookViewHolder, final int i) {
+
         bookViewHolder.bookTitle.setText(libros.get(i).getTitulo());
         bookViewHolder.bookAuthor.setText(libros.get(i).getAutor());
         bookViewHolder.bookCover.setImageBitmap(libros.get(i).getImage());
@@ -58,12 +60,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
 
             @Override
             public void onClick(View v) {
-                /*
-                TODO Poner aki el kodigo de lanzar la viu del book
-                 */
+            /*
+            TODO Poner aki el kodigo de lanzar la viu del book
+             */
                 System.out.println("Click en libro: " + libros.get(i).getTitulo());
             }
-        });;
+        });
     }
 
     @Override

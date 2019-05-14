@@ -34,8 +34,8 @@ public class LeidosFragment extends Fragment {
         //with the fragment you want to inflate
         //like if the class is HomeFragment it should have R.layout.home_fragment
         //if it is DashboardFragment it should have R.layout.fragment_dashboard
-        View view = inflater.inflate(R.layout.fragment_buscar, container, false);
-        rv = view.findViewById(R.id.searched_list_view);
+        View view = inflater.inflate(R.layout.fragment_lista, container, false);
+        rv = view.findViewById(R.id.books_list_view);
         rvLayoutManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(rvLayoutManager);
         rvAdapter = new RVAdapter(leidos);
@@ -45,7 +45,7 @@ public class LeidosFragment extends Fragment {
 
     public void refreshList(Libro libro) {
         leidos.add(libro);
-        RecyclerView rv = (RecyclerView) getView().findViewById(R.id.searched_list_view);
+        RecyclerView rv = (RecyclerView) getView().findViewById(R.id.books_list_view);
         RVAdapter adapter = new RVAdapter(leidos);
         rv.setAdapter(adapter);
     }
