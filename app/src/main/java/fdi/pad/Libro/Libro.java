@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.text.format.DateFormat;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +23,7 @@ import java.util.Locale;
  * Esta clase se guarda en el dispositivo si el atributo "seguido" se encuentra a True
  * Por motivos de seguridad, la clase solo es accesible desde el propio paquete donde se encuentra
  */
-class Libro {
+class Libro implements java.io.Serializable {
 
     /** Título del libro */
     private String titulo;
@@ -50,7 +49,7 @@ class Libro {
     /** Fecha en la que se marcó el libro como leído. La hora es indiferente */
     private String fechaLeido;
     /** Entero de 0 a 100 que refleja el porcentaje del libro que ha sido leído */
-    private int porcentajeLeido; //Se podría usar en el futuro
+    private int porcentajeLeido; //Se podría usar en el futuro //TODO ver esto. Si se usa, incluirlo en la carga y guardado
     /** True si el libro se ha seguido tras haberlo consultado en la api. No se debería poner a false.
      * Si está a True, "this" se guarda en el dispositivo. Si False, no se hace nada */
     private boolean seguido;
@@ -333,34 +332,6 @@ class Libro {
         //falloBorrado();
         return false;
     }*/
-
-    /**
-     * Mensaje de éxito si se ha guardado correctamente
-     */
-    private void exitoGuardado() {
-        Toast.makeText(this.context, "El libro se ha seguido correctamente", Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Mensaje de fallo si se ha guardado correctamente
-     */
-    private void falloGuardado() {
-        Toast.makeText(this.context, "No se ha podido seguir el libro. Comprueba tu conectividad y la memoria disponible en tu dispositivo", Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Mensaje de éxito si se ha borrado correctamente
-     */
-    private void exitoBorrado() {
-        Toast.makeText(this.context, "Ya no sigues a este libro", Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Mensaje de fallo si se ha borrado correctamente
-     */
-    private void falloBorrado() {
-        Toast.makeText(this.context, "Error al dejar de seguir el libro. Prueba más tarde", Toast.LENGTH_SHORT).show();
-    }
 
     Context getContext() {
         return context;

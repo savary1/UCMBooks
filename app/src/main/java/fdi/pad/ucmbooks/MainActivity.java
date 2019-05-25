@@ -18,12 +18,9 @@ import android.support.v7.widget.SearchView;
 
 import android.support.annotation.NonNull;
 
-import android.graphics.Bitmap;
-
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -36,7 +33,7 @@ import org.xml.sax.SAXException;
 
 import fdi.pad.Libro.LibroExecutor;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
 
     private LibreriaFragment libreria = new LibreriaFragment();
@@ -99,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             BitmapFactory.decodeStream(new URL(entryLibro.getElementsByTagName("image_url").item(0).getTextContent()).openConnection().getInputStream()),
                             entryLibro.getElementsByTagName("image_url").item(0).getTextContent()
                     );
-                    //libros.buttonSeguir(libros.getId(i));
+                    //libros.deleteAllFromFileSystem(); //TODO Borrar esto cuando las pruebas finalicen
                 }
             } catch (IOException | ParserConfigurationException | SAXException e){
                 e.printStackTrace();
@@ -114,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             activity.searchNotifier(v);
         }
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,8 +128,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         listaPrueba.add(prueba2);
         this.libreria.setLista(listaPrueba);
         this.leidos.setLista(listaPrueba);*/ //TODO Quitar esto cuando no sean necesarias más pruebas
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, this.libreria).commit();
+        //getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, this.libreria).commit();
         mainContext = this;
+        //Prueba de fragment de webview
+        /*setContentView(R.layout.fragment_libro);
+        LibroFragment libro = new LibroFragment();
+        LibroExecutor l = new LibroExecutor(mainContext);
+        l.addLibroSinImagen(mainContext, "patatas", "14", "JAVI", "19", "4");
+        libro.setLista(l);*/
     }
 
     @Override

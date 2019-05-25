@@ -3,6 +3,7 @@ package fdi.pad.Libro;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.webkit.JavascriptInterface;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -158,16 +159,20 @@ public class LibroExecutor {
 
     public Context getContext(String id) { return this.lH.getLibro(getIndex(id)).getContext(); }
 
+    @JavascriptInterface
     public String getTitulo(String id) { return this.lH.getLibro(getIndex(id)).getTitulo(); }
 
     public String getIdLibro(String id) { return this.lH.getLibro(getIndex(id)).getIdLibro(); }
 
+    @JavascriptInterface
     public String getAutor(String id) { return this.lH.getLibro(getIndex(id)).getAutor(); }
 
     public String getIdAutor(String id) { return this.lH.getLibro(getIndex(id)).getIdAutor(); }
 
+    @JavascriptInterface
     public String getRating(String id) { return this.lH.getLibro(getIndex(id)).getRating(); }
 
+    @JavascriptInterface
     public Bitmap getImage(String id) { return this.lH.getLibro(getIndex(id)).getImage(); }
 
     public String getImageURL(String id) { return this.lH.getLibro(getIndex(id)).getImageURL(); }
@@ -182,10 +187,12 @@ public class LibroExecutor {
 
     public boolean isLibroSeguido(String id) { return this.lH.isLibroSeguido(id); }
 
+    @JavascriptInterface
     public String getFechaSeguido(String id) { return this.lH.getFechaSeguido(id); }
 
     public boolean isLibroLeido(String id) { return this.lH.isLibroLeido(id); }
 
+    @JavascriptInterface
     public String getFechaLeido(String id) { return this.lH.getFechaLeido(id); }
 
     public ArrayList<Libro> getLibrosSeguidos() { return this.lH.getLibrosSeguidos(); }
