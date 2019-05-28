@@ -1,6 +1,7 @@
 package fdi.pad.ucmbooks;
 
 import fdi.pad.buscarUI.ButtonRVAdapter;
+import fdi.pad.libro.LibroExecutor;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -30,12 +31,12 @@ public class BuscarFragment extends Fragment {
         rv = view.findViewById(R.id.books_list_view);
         rvLayoutManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(rvLayoutManager);
-        rvAdapter = new ButtonRVAdapter(new ArrayList<Libro>(), ButtonRVAdapter.TIPO_BRVA.BUSCADO);
+        rvAdapter = new ButtonRVAdapter(new LibroExecutor(MainActivity.mainContext), ButtonRVAdapter.TIPO_BRVA.BUSCADO);
         rv.setAdapter(rvAdapter);
         return view;
     }
 
-    public void refreshList(ArrayList<Libro> libros){
+    public void refreshList(LibroExecutor libros){
         RecyclerView rv = (RecyclerView) getView().findViewById(R.id.books_list_view);
         ButtonRVAdapter adapter = new ButtonRVAdapter(libros, ButtonRVAdapter.TIPO_BRVA.BUSCADO);
         rv.setAdapter(adapter);

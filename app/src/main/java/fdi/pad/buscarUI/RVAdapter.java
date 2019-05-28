@@ -1,23 +1,21 @@
 package fdi.pad.buscarUI;
 
-import fdi.pad.ucmbooks.Libro;
-
 import java.util.ArrayList;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 
+import fdi.pad.libro.LibroExecutor;
 import fdi.pad.ucmbooks.R;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
 
-    public static class BookViewHolder extends RecyclerView.ViewHolder {
+    static class BookViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         TextView bookTitle;
         TextView bookAuthor;
@@ -32,15 +30,17 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
         }
     }
 
-    ArrayList<Libro> libros;
+    private LibroExecutor libros;
 
-    public RVAdapter(ArrayList<Libro> libros){
+    public RVAdapter(LibroExecutor libros){
         this.libros = libros;
     }
 
     @Override
     public int getItemCount() {
-        return libros.size();
+        if(libros != null)
+            return libros.getListaLibros().size();
+        return 0;
     }
 
     @Override
@@ -52,10 +52,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
 
     @Override
     public void onBindViewHolder(BookViewHolder bookViewHolder, final int i) {
-
-        bookViewHolder.bookTitle.setText(libros.get(i).getTitulo());
-        bookViewHolder.bookAuthor.setText(libros.get(i).getAutor());
-        bookViewHolder.bookCover.setImageBitmap(libros.get(i).getImage());
+        bookViewHolder.bookTitle.setText(libros.getTitulo(libros.getId(i)));
+        bookViewHolder.bookAuthor.setText(libros.getAutor(libros.getId(i)));
+        bookViewHolder.bookCover.setImageBitmap(libros.getImage(libros.getId(i)));
         bookViewHolder.itemView.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -63,7 +62,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
             /*
             TODO Poner aki el kodigo de lanzar la viu del book
              */
-                System.out.println("Click en libro: " + libros.get(i).getTitulo());
+            System.out.println("Click en libro: " + libros.getTitulo(libros.getId(i)));
             }
         });
     }

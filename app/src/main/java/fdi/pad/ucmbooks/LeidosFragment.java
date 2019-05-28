@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import fdi.pad.buscarUI.RVAdapter;
+import fdi.pad.libro.LibroExecutor;
 
 
 public class LeidosFragment extends Fragment {
@@ -19,11 +20,11 @@ public class LeidosFragment extends Fragment {
     private RecyclerView.Adapter rvAdapter;
     private RecyclerView.LayoutManager rvLayoutManager;
 
-    private ArrayList<Libro> leidos;
+    private LibroExecutor leidos;
 
     /*Los fragment solo pueden tener la constructora por defecto, no se pueden pasar argumentos
     por la constructora*/
-    public void setLista(ArrayList<Libro> leidos) {
+    public void setLista(LibroExecutor leidos) {
         this.leidos = leidos;
     }
 
@@ -43,8 +44,19 @@ public class LeidosFragment extends Fragment {
         return view;
     }
 
-    public void refreshList(Libro libro) {
-        leidos.add(libro);
+    public void refreshList(LibroExecutor libro) {
+        for(int i = 0; i < libro.getListaLibros().size(); ++i) {
+            leidos.addLibro(
+                    libro.getContext(libro.getId(i)),
+                    libro.getTitulo(libro.getId(i)),
+                    libro.getIdLibro(libro.getId(i)),
+                    libro.getAutor(libro.getId(i)),
+                    libro.getIdAutor(libro.getId(i)),
+                    libro.getRating(libro.getId(i)),
+                    libro.getImage(libro.getId(i)),
+                    libro.getImageURL(libro.getId(i))
+            );
+        }
         RecyclerView rv = (RecyclerView) getView().findViewById(R.id.books_list_view);
         RVAdapter adapter = new RVAdapter(leidos);
         rv.setAdapter(adapter);

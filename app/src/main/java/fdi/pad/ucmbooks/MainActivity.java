@@ -1,5 +1,6 @@
 package fdi.pad.ucmbooks;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.app.SearchManager;
@@ -18,12 +20,9 @@ import android.support.v7.widget.SearchView;
 
 import android.support.annotation.NonNull;
 
-import android.graphics.Bitmap;
-
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -33,6 +32,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import fdi.pad.about.AboutActivity;
+import fdi.pad.libro.LibroExecutor;
 
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
@@ -62,16 +64,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
-    private static class AsyncServerRequest extends AsyncTask<String, Void, ArrayList<Libro>> {
+    private static class AsyncServerRequest extends AsyncTask<String, Void, LibroExecutor> {
         private WeakReference<MainActivity> activityReference;
 
         AsyncServerRequest(MainActivity context){
             activityReference = new WeakReference<>(context);
         }
         @Override
-        public ArrayList<Libro> doInBackground(String... search){
+        public LibroExecutor doInBackground(String... search){
 
-            ArrayList<Libro> listaLibros = new ArrayList<>();
+            LibroExecutor libros = new LibroExecutor(mainContext);
             String apiKey = "ZjAhPX6VC8YMHCZIO5w6g";
             String urlText = "https://www.goodreads.com/search.xml?key=" + apiKey + "&q=" + search[0];
 
@@ -88,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     Element entryLibro = (Element) tmp.item(0);
                     tmp = entryLibro.getElementsByTagName("author");
                     Element entryAutor = (Element) tmp.item(0);
-                    Libro nuevo = new Libro(
+                    libros.addLibro(
                             mainContext, //Funciona?
                             entryLibro.getElementsByTagName("title").item(0).getTextContent(),
                             entryLibro.getElementsByTagName("id").item(0).getTextContent(),
@@ -98,17 +100,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             BitmapFactory.decodeStream(new URL(entryLibro.getElementsByTagName("image_url").item(0).getTextContent()).openConnection().getInputStream()),
                             entryLibro.getElementsByTagName("image_url").item(0).getTextContent()
                     );
-                    listaLibros.add(nuevo);
                     //nuevo.buttonSeguir();
                 }
             } catch (IOException | ParserConfigurationException | SAXException e){
                 e.printStackTrace();
             }
-            return listaLibros;
+            return libros;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Libro> v) {
+        protected void onPostExecute(LibroExecutor v) {
             MainActivity activity = activityReference.get();
             if(activity == null || activity.isFinishing()) return;
             activity.searchNotifier(v);
@@ -124,20 +125,30 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setSupportActionBar(myToolbar);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
+        mainContext = this;
+
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, this.libreria).commit();
+
         /*Para probar que el fragmento libreria funciona*/
-        Libro prueba = new Libro(this, "Titulo", "id", "Autor", "IDAutor", "Rating");
+        /*Libro prueba = new Libro(this, "Titulo", "id", "Autor", "IDAutor", "Rating");
         Libro prueba2 = new Libro(this, "Titulo2", "id2", "Autor2", "IDAutor2", "Rating2");
         ArrayList<Libro> listaPrueba = new ArrayList<>();
         listaPrueba.add(prueba);
         listaPrueba.add(prueba2);
         this.libreria.setLista(listaPrueba);
-        this.leidos.setLista(listaPrueba);
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, this.libreria).commit();
-        mainContext = this;
+        this.leidos.setLista(listaPrueba);*/ //TODO Quitar esto cuando no sean necesarias más pruebas
+        //getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, this.libreria).commit();
+
+        //Prueba de fragment de webview
+        /*setContentView(R.layout.fragment_libro);
+        LibroFragment libro = new LibroFragment();
+        LibroExecutor l = new LibroExecutor(mainContext);
+        l.addLibroSinImagen(mainContext, "patatas", "14", "JAVI", "19", "4");
+        libro.setLista(l);*/
     }
 
     @Override
-    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu, this adds items to the action bar if it is present.
 
             if(currentFragment == FR_TYPE.BUSCAR) {
@@ -198,14 +209,27 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return switchFragment(fragment);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        if(item.getItemId() == R.id.menu_acercaDe){
+            System.out.println("Pulsado Acerca de");
+            Intent intent= new Intent(this, AboutActivity.class);
+            startActivity(intent);
+        }
+        else if(item.getItemId() == R.id.menu_deleteData){
+            System.out.println("Pulsado Borrar Datos");
+        }
+        return true;
+    }
+
     private void searchOnline(String query){
         AsyncServerRequest request = new AsyncServerRequest(this);
         request.execute(query);
     }
 
-    private void searchNotifier(ArrayList<Libro> results){
-        for(int i = 0; i < results.size(); i++){
-            System.out.println(results.get(i).getTitulo());
+    private void searchNotifier(LibroExecutor results){
+        for(int i = 0; i < results.getListaLibros().size(); i++){
+            System.out.println(results.getTitulo(results.getId(i)));
         }
         buscar.refreshList(results);
     }
