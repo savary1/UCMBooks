@@ -5,11 +5,6 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 import android.webkit.JavascriptInterface;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -37,8 +32,7 @@ public class LibroExecutor {
      * @return Devuelve verdadero si el libro se ha añadido y guardado correctamente. Falso en caso contrario
      */
     public boolean addLibroSinImagen(Context context, String titulo, String idLibro, String autor, String idAutor, String rating) {
-        this.lH.addLibroSinImagen(context, titulo, idLibro, autor, idAutor, rating);
-        return saveAll();
+        return this.lH.addLibroSinImagen(context, titulo, idLibro, autor, idAutor, rating);
     }
 
     /**
@@ -56,8 +50,7 @@ public class LibroExecutor {
      */
     public boolean addLibro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
                          Bitmap image, String imageURL) {
-        this.lH.addLibro(context, titulo, idLibro, autor, idAutor, rating, image, imageURL);
-        return saveAll();
+        return this.lH.addLibro(context, titulo, idLibro, autor, idAutor, rating, image, imageURL);
     }
 
     /**
@@ -86,7 +79,13 @@ public class LibroExecutor {
      */
     public void deleteAllFromList() {
         this.lH.deleteAllFromList();
-        saveAll();
+    }
+
+    /**
+     * Método para borrar todos los libros que no hayan sido seguidos de la lista
+     */
+    public void deleteNonFollowedFromList() {
+        this.lH.deleteAllFromList();
     }
 
     /**
@@ -96,6 +95,8 @@ public class LibroExecutor {
     public boolean deleteAllFromFileSystem() {
         return this.lH.deleteAllFromFileSystem();
     }
+
+    public boolean loadList() throws ClassNotFoundException { return this.lH.loadList(); }
 
     /**
      * Marca un libro como leído

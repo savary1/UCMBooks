@@ -4,6 +4,8 @@ import fdi.pad.Libro.LibroExecutor;
 
 import java.util.ArrayList;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 
+import fdi.pad.ucmbooks.LibroFragment;
+import fdi.pad.ucmbooks.MainActivity;
 import fdi.pad.ucmbooks.R;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
@@ -60,12 +64,21 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
 
             @Override
             public void onClick(View v) {
-                /*
-                TODO Poner aki el kodigo de lanzar la viu del book
-                 */
-                System.out.println("Click en libro: " + libros.getTitulo(libros.getId(i)));
+                LibroFragment lF = new LibroFragment();
+                switchContent(R.id.fragment_container, lF);
             }
         });;
+    }
+
+    public void switchContent(int id, Fragment fragment) {
+        if (MainActivity.mainContext == null)
+            return;
+        if (MainActivity.mainContext instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) MainActivity.mainContext;
+            Fragment frag = fragment;
+            mainActivity.switchWebViewFragment(id, frag);
+        }
+
     }
 
     @Override

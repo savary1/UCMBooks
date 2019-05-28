@@ -80,13 +80,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 Document doc = builder.parse(conn.getInputStream());
                 NodeList nodes = doc.getElementsByTagName("work");
+                //Borramos los libros guardados en la lista y que no estén seguidos para liberar memoria
+                libros.deleteNonFollowedFromList();
+                //Realizamos la búsqueda
                 for (int i = 0; i < nodes.getLength() && i < 10; i++) {
                     Element entry = (Element) nodes.item(i);
                     NodeList tmp = entry.getElementsByTagName("best_book");
                     Element entryLibro = (Element) tmp.item(0);
                     tmp = entryLibro.getElementsByTagName("author");
                     Element entryAutor = (Element) tmp.item(0);
-                    libros.addLibro(
+                    libros.addLibro( //TODO addLibro devuelve true o false. Convendría hacer logs en consola diciendo si fallo?
                             mainContext, //Funciona?
                             entryLibro.getElementsByTagName("title").item(0).getTextContent(),
                             entryLibro.getElementsByTagName("id").item(0).getTextContent(),
@@ -171,6 +174,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             return true;
         }
         return false;
+    }
+
+    public void switchWebViewFragment(int id, Fragment fragment) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(id, fragment, fragment.toString());
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
 

@@ -10,9 +10,11 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -54,8 +56,9 @@ class LibroHandler implements java.io.Serializable {
      * @param idAutor ID asociada al autor. Valor único
      * @param rating Valoración del libro
      */
-    void addLibroSinImagen(Context context, String titulo, String idLibro, String autor, String idAutor, String rating) {
+    boolean addLibroSinImagen(Context context, String titulo, String idLibro, String autor, String idAutor, String rating) {
         this.libros.add(new Libro(context, titulo, idLibro, autor, idAutor, rating));
+        return this.libros.get(this.libros.size() - 1).getIdLibro().equals(idLibro);
     }
 
     /**
@@ -69,9 +72,10 @@ class LibroHandler implements java.io.Serializable {
      * @param image Imagen en formato Bitmap. Se pasa este parámetro para poder guardarla en el dispositivo
      * @param imageURL URL de la imagen. Obtenida de la API
      */
-    void addLibro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
+    boolean addLibro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
                          Bitmap image, String imageURL) {
         this.libros.add(new Libro(context, titulo, idLibro, autor, idAutor, rating, image, imageURL));
+        return this.libros.get(this.libros.size() - 1).getIdLibro().equals(idLibro);
     }
 
     /**
@@ -80,7 +84,7 @@ class LibroHandler implements java.io.Serializable {
      * @param i índice del libro dentro de la lista de ellos
      * @return Ddevuelve verdadero si el libro se ha guardado correctamente, falso en caso contrario
      */
-    boolean saveLibroIndividual(ObjectOutputStream oos, int i) {
+    private boolean saveLibroIndividual(ObjectOutputStream oos, int i) {
         try {
             oos.writeObject(this.libros.get(i).getTitulo());
             oos.writeObject(this.libros.get(i).getIdLibro());
@@ -105,15 +109,6 @@ class LibroHandler implements java.io.Serializable {
             oos.writeObject(this.libros.get(i).getUserReview());
             oos.writeObject(this.libros.get(i).getUserRating());
 
-            //TODO poner todo el código de abajo en la sección de cargado, donde corresponda. Es para la imagen
-            //la variable "in" es un ObjectInputStream. No hay que olvidarse de hacer el FileOutputStream
-            /*ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-            int b;
-            while((b = in.read()) != -1)
-                byteStream.write(b);
-            byte bitmapBytes[] = byteStream.toByteArray();
-            this.image = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);*/
-
             return true;
         }
         catch (IOException e) {
@@ -124,7 +119,22 @@ class LibroHandler implements java.io.Serializable {
     }
 
     /**
-     * Guarda toda la lista de libros en la memoria interna del teléfono
+     * Guarda toda la lista de libros en la memoria interna del teléfono. Solo guarda los seguidos
+     * Guarda los datos de la siguiente forma:
+     *  - Número de libros seguidos
+     *  - Datos del libro n. Es un bucle a partir de aquí
+     *      - Título del libro n
+     *      - ID del libro n
+     *      - Autor del libro n
+     *      - ID del autor del libro n
+     *      - URL de la imagen del libro n
+     *      - Array de bits de la imagen del libro n
+     *      - Puntuación del libro n
+     *      - Fecha seguido del libro n
+     *      - Booleano de si está leído el libro n
+     *      - Fecha de leído del libro n
+     *      - Review del libro n
+     *      - Rating del usuario del libro n
      * @return Devuelve verdadero si lo ha guardado correctamente, falso en caso contrario
      */
     boolean saveAll() {
@@ -132,8 +142,18 @@ class LibroHandler implements java.io.Serializable {
             FileOutputStream fos = this.context.openFileOutput(this.fileName, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
 
+            //Necesitamos un índice para saber cuantos libros guardamos. Si es 0, no se guarda nada
+            int numSeguidos = 0;
             for(int i = 0; i < this.libros.size(); ++i) {
-                saveLibroIndividual(oos, i);
+                if(this.libros.get(i).isSeguido())
+                    ++numSeguidos;
+            }
+            if(numSeguidos != 0)
+                oos.writeInt(numSeguidos);
+
+            for(int i = 0; i < this.libros.size(); ++i) {
+                if(this.libros.get(i).isSeguido())
+                    saveLibroIndividual(oos, i);
             }
 
             oos.close();
@@ -171,6 +191,16 @@ class LibroHandler implements java.io.Serializable {
     }
 
     /**
+     * Borra todos los libros no seguidos de la lista
+     */
+    void deleteNonFollowedFromList() {
+        for(int i = 0; i < this.libros.size(); ++i) {
+            if(!this.libros.get(i).isSeguido())
+                this.libros.remove(i);
+        }
+    }
+
+    /**
      * Borra el archivo de guardado de la memoria interna del teléfono
      * @return Devuelve verdadero si el borrado se ha ejecutado correctamente, falso en caso contrario
      */
@@ -195,9 +225,63 @@ class LibroHandler implements java.io.Serializable {
         return false;
     }
 
-    //TODO Hacer esto, aunque pensandolo puede que no sea necesario porque la creación de la clase debería venir de fuera, así como la carga de las cosas
-    void loadList() {
+    /**
+     * Carga los libros seguidos de la memoria interna a la lista
+     * @return Devuelve verdadero si la carga se ha ejecutado correctamente, falso en caso contrario
+     * @throws ClassNotFoundException
+     */
+    boolean loadList() throws ClassNotFoundException {
+        try {
+            FileInputStream fis = new FileInputStream("data/data/fdi.pad.ucmbooks/files/Libros");
+            ObjectInputStream ois = new ObjectInputStream(fis);
 
+            //Cogemos cuántos libros están guardados
+            int n = ois.readInt();
+
+            for(int i = 0; i < n; ++i) {
+                //Cargamos las variables
+                String titulo = (String)ois.readObject();
+                String idLibro = (String)ois.readObject();
+                String autor = (String)ois.readObject();
+                String idAutor = (String)ois.readObject();
+                String imageURL = (String)ois.readObject();
+                ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                int b;
+                while((b = ois.read()) != -1)
+                    byteStream.write(b);
+                byte bitmapBytes[] = byteStream.toByteArray();
+                Bitmap image = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+                String rating = (String)ois.readObject();
+                String fechaSeguido = (String)ois.readObject();
+                boolean leido = (boolean)ois.readObject();
+                String fechaLeido = (String)ois.readObject();
+                String review = (String)ois.readObject();
+                Integer userRating = (Integer)ois.readObject();
+
+                //Añadimos el libro
+                addLibro(this.context, titulo, idLibro, autor, idAutor, rating, image, imageURL);
+
+                //Actualizamos los datos
+                this.libros.get(this.libros.size() - 1).setFechaSeguido(fechaSeguido);
+                if(leido)
+                    this.libros.get(this.libros.size() - 1).libroLeido(fechaLeido);
+                this.libros.get(this.libros.size() - 1).makeReview(review);
+                this.libros.get(this.libros.size() - 1).stablishRating(userRating);
+            }
+
+            ois.close();
+            fis.close();
+
+            return true;
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     /**

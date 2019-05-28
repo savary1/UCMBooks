@@ -50,8 +50,7 @@ class Libro implements java.io.Serializable {
     private String fechaLeido;
     /** Entero de 0 a 100 que refleja el porcentaje del libro que ha sido leído */
     private int porcentajeLeido; //Se podría usar en el futuro //TODO ver esto. Si se usa, incluirlo en la carga y guardado
-    /** True si el libro se ha seguido tras haberlo consultado en la api. No se debería poner a false.
-     * Si está a True, "this" se guarda en el dispositivo. Si False, no se hace nada */
+    /** Si está a True, "this" se guarda en el dispositivo. Si False, no se hace nada */
     private boolean seguido;
     /** Fecha en la que se dio a seguir al libro. La hora es indiferente */
     private String fechaSeguido;
@@ -126,7 +125,7 @@ class Libro implements java.io.Serializable {
         this.leido = false;
         this.fechaSeguido = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         this.porcentajeLeido = 0;
-        this.seguido = true;
+        this.seguido = false;
         this.imageFolder = "/Bookimages"; //TODO Quitar carpeta de imágenes si se visualizan correctamente con el sistema del Handler
         this.userRating = null;
         this.userReview = "";
@@ -136,18 +135,34 @@ class Libro implements java.io.Serializable {
      * Si un libro se ha leído, se pone a true el atributo y a 100 el porcentaje leído
      */
     void libroLeido() {
-        this.leido = true;
-        this.porcentajeLeido = 100;
-        this.fechaLeido = "Leido: " + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        if(this.seguido) {
+            this.leido = true;
+            this.porcentajeLeido = 100;
+            this.fechaLeido = "Leido: " + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        }
+    }
+
+    /**
+     * Si un libro se ha leído, se pone a true el atributo y a 100 el porcentaje leído. La fecha se actualiza según el parámetro
+     * @param fechaLeido Fecha en la que el libro fue leído
+     */
+    void libroLeido(String fechaLeido) {
+        if(this.seguido) {
+            this.leido = true;
+            this.porcentajeLeido = 100;
+            this.fechaLeido = "Leido: " + fechaLeido;
+        }
     }
 
     /**
      * Si un libro no se ha leído o se pone a false el atributo y a 0 el porcentaje leído
      */
     void libroNoLeido() {
-        this.leido = false;
-        this.porcentajeLeido = 0;
-        this.fechaLeido = "Sin leer (por ahora) ;-)";
+        if(this.seguido) {
+            this.leido = false;
+            this.porcentajeLeido = 0;
+            this.fechaLeido = "Sin leer (por ahora) ;-)";
+        }
     }
 
     /**
@@ -201,14 +216,14 @@ class Libro implements java.io.Serializable {
         if(this.seguido) {
             /*if(!deleteBook())
                 return false; //Si no se ha borrado el libro, devuelve falso*/
-            this.seguido = false; //A pear de que se borre de la memoria interna, el valor se actualiza para mostrar "this" si es necesario
+            this.seguido = false; //A pesar de que se borre de la memoria interna, el valor se actualiza para mostrar "this" si es necesario
             return true; //Se devuelve true si se ha borrado y se ha dejado de seguir correctamente
         }
         else return false; //Si el libro no estaba seguido, no se puede quitar de seguido
     }
 
-    boolean stablishRating(int userRating) {
-        if(userRating < 0 || userRating > 10)
+    boolean stablishRating(Integer userRating) {
+        if(userRating == null || userRating < 0 || userRating > 10)
             return false;
         this.userRating = userRating;
         return true;
@@ -218,120 +233,9 @@ class Libro implements java.io.Serializable {
         this.userReview = userReview;
     }
 
-    /**
-     * Método que se llama cuando se deben actualizar los valores de un libro seguido. Llama al método para dejar
-     * de seguirlo y así borrarlo de la memoria. Después
-     * NO FUNCIONA ASÍ, TENGO LA IMPRESION
-     */
-    /* ******************************************************************************************
-    POR HACER esto
-     */
-    /*public void updateContent() {
-        if(!this.seguido)
-            this.seguido = true;
-        dejarDeSeguirLibro();
-    }*/
-
-    /*private boolean saveImage() {
-        //Creamos la carpeta donde vamos a guardar la imagen
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + imageFolder);
-
-        //Comprobamos que exista y que si no, la cree
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        //Creamos el archivo sobre el que vamos a guardar la imagen
-        File file = new File(dir, imageName);
-        try {
-            FileOutputStream fOut = new FileOutputStream(file);
-
-            this.image.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-            fOut.flush();
-            fOut.close();
-            MakeSureFileWasCreatedThenMakeAvabile(file);
-
-            return true;
-        }
-        catch(FileNotFoundException e) {
-            e.printStackTrace();
-            falloGuardado();
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-            falloGuardado();
-        }
-
-        return false;
+    void setFechaSeguido(String fechaSeguido) {
+        this.fechaSeguido = fechaSeguido;
     }
-
-    /**
-     * Comprueba que el archivo se ha creado
-     * @param file El archivo a comprobar
-     */
-    /*private void checkFileCreation(File file){
-        MediaScannerConnection.scanFile(context,
-                new String[] { file.toString() } , null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-
-                    public void onScanCompleted(String path, Uri uri) {
-                    }
-                });
-    }*/
-
-    /**
-     * Guarda el libro en la memoria interna del teléfono
-     * @return Verdadero si se ha guardado correctamente. Falso en caso contrario
-     */
-    /*
-    private boolean saveBook() {
-        try {
-            FileOutputStream fos = this.context.openFileOutput(this.idLibro, Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            /*String s = this.titulo + "\n" + this.idLibro + "\n" + this.autor + "\n" + this.idAutor + "\n" +
-                    this.imageName + "\n" + this.imageURL + "\n" + this.rating + "\n" + this.leido + "\n" +
-                    this.porcentajeLeido;*/
-    //fos.write(s.getBytes());
-            /*oos.writeObject(this.titulo);
-            oos.writeObject(this.idLibro);
-            oos.writeObject(this.autor);
-            oos.writeObject(this.idAutor);
-            oos.writeObject(this.imageURL);
-            oos.writeObject(this.image);
-            oos.writeObject(this.rating);
-            oos.writeObject(this.leido);
-            oos.close();
-            fos.close();
-            //exitoGuardado();
-            return true;
-        }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-            //falloGuardado();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            //falloGuardado();
-        }
-
-        return false;
-    }*/
-
-    /**
-     * Borra el libro de la memoria interna del teléfono
-     * @return Verdadero si se ha borrado correctamente. Falso en caso contrario
-     */
-    /*private boolean deleteBook() {
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + this.idLibro);
-
-        if(file.delete()) {
-            //exitoBorrado();
-            return true;
-        }
-
-        //falloBorrado();
-        return false;
-    }*/
 
     Context getContext() {
         return context;
