@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private LibreriaFragment libreria = new LibreriaFragment();
     private BuscarFragment buscar = new BuscarFragment();
     private LeidosFragment leidos = new LeidosFragment();
+    private LibroExecutor libros = new LibroExecutor(this);
     public static Context mainContext;
 
     private enum FR_TYPE{
@@ -74,11 +75,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         @Override
         public LibroExecutor doInBackground(String... search){
 
-            LibroExecutor libros = new LibroExecutor(mainContext);
+            LibroExecutor libros = activityReference.get().libros;
+            libros.deleteAllFromBusqueda();
             String apiKey = "ZjAhPX6VC8YMHCZIO5w6g";
             String urlText = "https://www.goodreads.com/search.xml?key=" + apiKey + "&q=" + search[0];
 
             try {
+
                 URL url = new URL(urlText);
                 URLConnection conn = url.openConnection();
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     Element entryLibro = (Element) tmp.item(0);
                     tmp = entryLibro.getElementsByTagName("author");
                     Element entryAutor = (Element) tmp.item(0);
-                    libros.addLibro(
+                    libros.addToBusqueda(
                             mainContext, //Funciona?
                             entryLibro.getElementsByTagName("title").item(0).getTextContent(),
                             entryLibro.getElementsByTagName("id").item(0).getTextContent(),
@@ -101,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             BitmapFactory.decodeStream(new URL(entryLibro.getElementsByTagName("image_url").item(0).getTextContent()).openConnection().getInputStream()),
                             entryLibro.getElementsByTagName("image_url").item(0).getTextContent()
                     );
-                    //nuevo.buttonSeguir();
                 }
             } catch (IOException | ParserConfigurationException | SAXException e){
                 e.printStackTrace();
@@ -127,6 +129,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
         mainContext = this;
+        try {
+            libros.loadList();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        this.libreria.setLista(libros);
+        this.leidos.setLista(libros);
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, this.libreria).commit();
 
@@ -231,9 +240,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void searchNotifier(LibroExecutor results){
-        for(int i = 0; i < results.getListaLibros().size(); i++){
-            System.out.println(results.getTitulo(results.getId(i)));
-        }
         buscar.refreshList(results);
     }
 }

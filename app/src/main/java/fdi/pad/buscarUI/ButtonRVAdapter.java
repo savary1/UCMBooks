@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import fdi.pad.libro.Libro;
 import fdi.pad.libro.LibroExecutor;
 import fdi.pad.ucmbooks.R;
 
@@ -68,9 +69,16 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
     @Override
     public void onBindViewHolder(@NonNull ButtonRVAdapter.ButtonBookViewHolder bookViewHolder, int i) {
         final int index = i;
-        bookViewHolder.bookTitle.setText(libros.getTitulo(libros.getId(index)));
-        bookViewHolder.bookAuthor.setText(libros.getAutor(libros.getId(index)));
-        bookViewHolder.bookCover.setImageBitmap(libros.getImage(libros.getId(index)));
+        final Libro l;
+        if(tipo == TIPO_BRVA.SEGUIDO){
+            l = libros.getFromSeguidos(i);
+        }
+        else {
+            l = libros.getFromBusqueda(i);
+        }
+        bookViewHolder.bookTitle.setText(l.getTitulo());
+        bookViewHolder.bookAuthor.setText(l.getAutor());
+        bookViewHolder.bookCover.setImageBitmap(l.getImage());
         bookViewHolder.itemView.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -78,7 +86,7 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
             /*
             TODO Poner aki el kodigo de lanzar la viu del book
              */
-                System.out.println("Click en libro: " + libros.getTitulo(libros.getId(index)));
+                System.out.println("Click en libro: " + l.getTitulo());
             }
         });
         bookViewHolder.boton.setOnClickListener(new View.OnClickListener(){
@@ -88,7 +96,9 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
             /*
             TODO Poner aki el kodigo del boton del libro
              */
-                System.out.println("Click en boton de libro: " + libros.getTitulo(libros.getId(index)));
+                System.out.println("Click en boton de libro: " + l.getTitulo());
+                libros.addToSeguidos(l);
+
             }
         });
     }
@@ -96,7 +106,10 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
     @Override
     public int getItemCount() {
         if(libros != null)
-            return libros.getListaLibros().size();
+            if(tipo == TIPO_BRVA.SEGUIDO)
+                return libros.getSeguidosSize();
+            if(tipo == TIPO_BRVA.BUSCADO)
+                return libros.getBusquedaSize();
         return 0;
     }
 

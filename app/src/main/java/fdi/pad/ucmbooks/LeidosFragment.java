@@ -44,6 +44,7 @@ public class LeidosFragment extends Fragment {
         return view;
     }
 
+    /*
     public void refreshList(LibroExecutor libro) {
         for(int i = 0; i < libro.getListaLibros().size(); ++i) {
             leidos.addLibro(
@@ -61,5 +62,6 @@ public class LeidosFragment extends Fragment {
         RVAdapter adapter = new RVAdapter(leidos);
         rv.setAdapter(adapter);
     }
+    */
 
 }

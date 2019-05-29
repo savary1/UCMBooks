@@ -39,7 +39,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
     @Override
     public int getItemCount() {
         if(libros != null)
-            return libros.getListaLibros().size();
+            return libros.getLeidosSize();
         return 0;
     }
 
@@ -52,9 +52,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
 
     @Override
     public void onBindViewHolder(BookViewHolder bookViewHolder, final int i) {
-        bookViewHolder.bookTitle.setText(libros.getTitulo(libros.getId(i)));
-        bookViewHolder.bookAuthor.setText(libros.getAutor(libros.getId(i)));
-        bookViewHolder.bookCover.setImageBitmap(libros.getImage(libros.getId(i)));
+        bookViewHolder.bookTitle.setText(libros.getFromLeidos(i).getTitulo());
+        bookViewHolder.bookAuthor.setText(libros.getFromLeidos(i).getAutor());
+        bookViewHolder.bookCover.setImageBitmap(libros.getFromLeidos(i).getImage());
         bookViewHolder.itemView.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -62,7 +62,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
             /*
             TODO Poner aki el kodigo de lanzar la viu del book
              */
-            System.out.println("Click en libro: " + libros.getTitulo(libros.getId(i)));
+            System.out.println("Click en libro: " + libros.getFromLeidos(i).getTitulo());
             }
         });
     }

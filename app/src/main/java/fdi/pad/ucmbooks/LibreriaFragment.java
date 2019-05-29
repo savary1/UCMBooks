@@ -44,6 +44,7 @@ public class LibreriaFragment extends Fragment {
         return view;
     }
 
+        /*
     public void refreshList(LibroExecutor libro){
         for(int i = 0; i < libro.getListaLibros().size(); ++i) {
             guardados.addLibro(
@@ -61,4 +62,5 @@ public class LibreriaFragment extends Fragment {
         ButtonRVAdapter adapter = new ButtonRVAdapter(guardados, ButtonRVAdapter.TIPO_BRVA.SEGUIDO);
         rv.setAdapter(adapter);
     }
+    */
 }
