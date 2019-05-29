@@ -34,6 +34,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import fdi.pad.about.AboutActivity;
+import fdi.pad.clearData.ClearDataActivity;
 import fdi.pad.libro.LibroExecutor;
 
 
@@ -218,6 +219,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         else if(item.getItemId() == R.id.menu_deleteData){
             System.out.println("Pulsado Borrar Datos");
+            Intent intent= new Intent(this, ClearDataActivity.class);
+            startActivity(intent);
         }
         return true;
     }
