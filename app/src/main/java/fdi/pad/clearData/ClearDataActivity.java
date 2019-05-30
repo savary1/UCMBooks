@@ -7,9 +7,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import fdi.pad.libro.LibroExecutor;
+import fdi.pad.ucmbooks.MainActivity;
 import fdi.pad.ucmbooks.R;
 
 public class ClearDataActivity extends AppCompatActivity {
+
+    final LibroExecutor libros = new LibroExecutor(MainActivity.mainContext);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +28,7 @@ public class ClearDataActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-            /*
-            TODO Poner aki el kodigo del boton del libro
-             */
-                System.out.println("Click en boton de borar datos");
+                libros.deleteAllFromFileSystem();
             }
         });
     }

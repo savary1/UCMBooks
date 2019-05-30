@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 
 import fdi.pad.libro.LibroExecutor;
+import fdi.pad.ucmbooks.MainActivity;
 import fdi.pad.ucmbooks.R;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
@@ -30,11 +31,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
         }
     }
 
-    private LibroExecutor libros;
-
-    public RVAdapter(LibroExecutor libros){
-        this.libros = libros;
-    }
+    private LibroExecutor libros = new LibroExecutor(MainActivity.mainContext);
 
     @Override
     public int getItemCount() {

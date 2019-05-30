@@ -79,7 +79,7 @@ public class Libro implements java.io.Serializable {
      * @param idAutor ID asociada al autor. Valor único
      * @param rating Valoración del libro
      */
-    Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating) {
+    public Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating) {
         this.context = context;
         this.titulo = titulo;
         this.idLibro = idLibro;
@@ -104,7 +104,7 @@ public class Libro implements java.io.Serializable {
      * @param image Imagen en formato Bitmap. Se pasa este parámetro para poder guardarla en el dispositivo
      * @param imageURL URL de la imagen. Obtenida de la API
      */
-    Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
+    public Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
           Bitmap image, String imageURL) {
         this.context = context;
         this.titulo = titulo;
@@ -153,7 +153,7 @@ public class Libro implements java.io.Serializable {
     /**
      * Si un libro se ha leído, se pone a true el atributo y a 100 el porcentaje leído
      */
-    void libroLeido() {
+    public void libroLeido() {
         if(this.seguido) {
             this.leido = true;
             this.porcentajeLeido = 100;
@@ -165,7 +165,7 @@ public class Libro implements java.io.Serializable {
      * Si un libro se ha leído, se pone a true el atributo y a 100 el porcentaje leído. La fecha se actualiza según el parámetro
      * @param fechaLeido Fecha en la que el libro fue leído
      */
-    void libroLeido(String fechaLeido) {
+    public void libroLeido(String fechaLeido) {
         if(this.seguido) {
             this.leido = true;
             this.porcentajeLeido = 100;
@@ -207,7 +207,7 @@ public class Libro implements java.io.Serializable {
      * Cuando se pulsa el botón de seguir libro, si ya estaba seguido se deja de seguir y si no, se sigue
      * @return Verdadero si se ha seguido el libro, falso en caso contrario
      */
-    boolean buttonSeguir() {
+    public boolean buttonSeguir() {
         return !this.seguido ? seguirLibro() : dejarDeSeguirLibro();
     }
 

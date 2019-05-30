@@ -175,6 +175,15 @@ class LibroHandler implements java.io.Serializable {
     }
 
     /**
+     * Sustituye la lista de busqueda
+     * @param libros lista nueva
+     */
+    public void setBusqueda(ArrayList<Libro> libros){
+        busqueda = libros;
+        busquedaChange = true;
+    }
+
+    /**
      * Borra toda la lista de seguidos, dejándola vacía
      * ¡Importante! No borra los libros de la memoria interna del teléfono
      */
@@ -283,11 +292,12 @@ class LibroHandler implements java.io.Serializable {
     boolean deleteAllFromFileSystem() {
         File file = new File(this.context.getFilesDir().getAbsolutePath() + "/");
         String[] children = file.list();
+        boolean result = true;
 
         if(children.length == 1) {
             if (new File(file, children[0]).delete()) {
                 this.printToast(this.exitoBorrado);
-                return true;
+                result = true;
             }
         }
         //Nunca debería entrar aquí
@@ -295,6 +305,8 @@ class LibroHandler implements java.io.Serializable {
             for (int i = 0; i < children.length; i++) {
                 new File(file, children[i]).delete();
             }
+            result = false;
+            this.printToast(this.falloBorrado);
         }
 
         seguidos = new ArrayList<>();
@@ -304,8 +316,7 @@ class LibroHandler implements java.io.Serializable {
         busqueda = new ArrayList<>();
         busquedaChange = true;
 
-        this.printToast(this.falloBorrado);
-        return false;
+        return result;
     }
 
     /**
@@ -539,15 +550,15 @@ class LibroHandler implements java.io.Serializable {
         return new Libro(busqueda.get(i));
     }
 
-    boolean isSeguidosChange(){
+    public boolean isSeguidosChanged(){
         return seguidosChange;
     }
 
-    boolean isLeidosChange(){
+    public boolean isLeidosChanged(){
         return leidosChange;
     }
 
-    boolean isBusquedaChange(){
+    public boolean isBusquedaChanged(){
         return busquedaChange;
     }
 

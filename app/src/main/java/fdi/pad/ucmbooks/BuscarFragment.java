@@ -19,6 +19,7 @@ public class BuscarFragment extends Fragment {
     private RecyclerView rv;
     private RecyclerView.Adapter rvAdapter;
     private RecyclerView.LayoutManager rvLayoutManager;
+    private LibroExecutor libros = new LibroExecutor(MainActivity.mainContext);
 
     @Nullable
     @Override
@@ -31,14 +32,15 @@ public class BuscarFragment extends Fragment {
         rv = view.findViewById(R.id.books_list_view);
         rvLayoutManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(rvLayoutManager);
-        rvAdapter = new ButtonRVAdapter(new LibroExecutor(MainActivity.mainContext), ButtonRVAdapter.TIPO_BRVA.BUSCADO);
+        rvAdapter = new ButtonRVAdapter(ButtonRVAdapter.TIPO_BRVA.BUSCADO);
         rv.setAdapter(rvAdapter);
         return view;
     }
 
-    public void refreshList(LibroExecutor libros){
+
+    public void refreshList(){
         RecyclerView rv = (RecyclerView) getView().findViewById(R.id.books_list_view);
-        ButtonRVAdapter adapter = new ButtonRVAdapter(libros, ButtonRVAdapter.TIPO_BRVA.BUSCADO);
+        ButtonRVAdapter adapter = new ButtonRVAdapter(ButtonRVAdapter.TIPO_BRVA.BUSCADO);
         rv.setAdapter(adapter);
     }
 }

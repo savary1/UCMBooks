@@ -20,13 +20,7 @@ public class LeidosFragment extends Fragment {
     private RecyclerView.Adapter rvAdapter;
     private RecyclerView.LayoutManager rvLayoutManager;
 
-    private LibroExecutor leidos;
-
-    /*Los fragment solo pueden tener la constructora por defecto, no se pueden pasar argumentos
-    por la constructora*/
-    public void setLista(LibroExecutor leidos) {
-        this.leidos = leidos;
-    }
+    private LibroExecutor libros = new LibroExecutor(MainActivity.mainContext);
 
     @Nullable
     @Override
@@ -39,29 +33,16 @@ public class LeidosFragment extends Fragment {
         rv = view.findViewById(R.id.books_list_view);
         rvLayoutManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(rvLayoutManager);
-        rvAdapter = new RVAdapter(leidos);
+        rvAdapter = new RVAdapter();
         rv.setAdapter(rvAdapter);
         return view;
     }
 
-    /*
-    public void refreshList(LibroExecutor libro) {
-        for(int i = 0; i < libro.getListaLibros().size(); ++i) {
-            leidos.addLibro(
-                    libro.getContext(libro.getId(i)),
-                    libro.getTitulo(libro.getId(i)),
-                    libro.getIdLibro(libro.getId(i)),
-                    libro.getAutor(libro.getId(i)),
-                    libro.getIdAutor(libro.getId(i)),
-                    libro.getRating(libro.getId(i)),
-                    libro.getImage(libro.getId(i)),
-                    libro.getImageURL(libro.getId(i))
-            );
-        }
+
+    public void refreshList() {
         RecyclerView rv = (RecyclerView) getView().findViewById(R.id.books_list_view);
-        RVAdapter adapter = new RVAdapter(leidos);
+        RVAdapter adapter = new RVAdapter();
         rv.setAdapter(adapter);
     }
-    */
 
 }

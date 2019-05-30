@@ -10,10 +10,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import fdi.pad.libro.Libro;
 import fdi.pad.libro.LibroExecutor;
+import fdi.pad.ucmbooks.MainActivity;
 import fdi.pad.ucmbooks.R;
 
 public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.ButtonBookViewHolder> {
@@ -39,11 +43,10 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
         SEGUIDO, BUSCADO
     }
 
-    private LibroExecutor libros;
+    private LibroExecutor libros = new LibroExecutor(MainActivity.mainContext);
     private TIPO_BRVA tipo;
 
-    public ButtonRVAdapter (LibroExecutor libros, TIPO_BRVA tipo){
-        this.libros = libros;
+    public ButtonRVAdapter (TIPO_BRVA tipo){
         this.tipo = tipo;
     }
 
@@ -93,12 +96,16 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
 
             @Override
             public void onClick(View v) {
-            /*
-            TODO Poner aki el kodigo del boton del libro
-             */
-                System.out.println("Click en boton de libro: " + l.getTitulo());
-                libros.addToSeguidos(l);
-
+                if(tipo == TIPO_BRVA.BUSCADO) {
+                    l.buttonSeguir();
+                    libros.addToSeguidos(l);
+                }
+                else{
+                    libros.deleteFromSeguidos(l.getIdLibro());
+                    l.libroLeido();
+                    libros.addToLeidos(l);
+                }
+                notifyDataSetChanged();
             }
         });
     }

@@ -69,6 +69,11 @@ public class LibroExecutor {
         return false;
     }
 
+    public boolean  addToLeidos(Libro l) {
+        this.lH.addToLeidos(l);
+        return this.lH.saveAll();
+    }
+
     /**
      * Añade un libro a la lista de busqueda con imagen asociada a él
      * Después lo guarda
@@ -88,14 +93,24 @@ public class LibroExecutor {
     }
 
     /**
+     * Sustituye la lista de busqueda
+     * @param libros lista nueva
+     */
+    public void setBusqueda(ArrayList<Libro> libros){
+        this.lH.setBusqueda(libros);
+    }
+
+    /**
      * Método para borrar un libro de seguidos según su ID
      * También s eelimina de la memoria
      * Este método no devuelve nada porque borrar un libro de la lista es algo trivial (en teoría)
      * @param id Identificador único de cada libro
+     * @return  libro eliminado
      */
-    public void deleteFromSeguidos(String id) {
-        this.lH.deleteFromSeguidos(id);
+    public Libro deleteFromSeguidos(String id) {
+        Libro l = this.lH.deleteFromSeguidos(id);
         this.lH.saveAll();
+        return l;
     }
 
     /**
@@ -235,6 +250,30 @@ public class LibroExecutor {
      */
     public Libro getFromBusqueda(int i){
         return this.lH.getFromBusqueda(i);
+    }
+
+    /**
+     * Devuelve si la lista seguidos ha sido cambiada desde la última vez que se leyo
+     * @return  estado de la lista
+     */
+    public boolean isSeguidosChanged(){
+        return this.lH.isSeguidosChanged();
+    }
+
+    /**
+     * Devuelve si la lista leidos ha sido cambiada desde la última vez que se leyo
+     * @return  estado de la lista
+     */
+    public boolean isLeidosChanged(){
+        return this.lH.isLeidosChanged();
+    }
+
+    /**
+     * Devuelve si la lista busqueda ha sido cambiada desde la última vez que se leyo
+     * @return  estado de la lista
+     */
+    public boolean isBusquedaChanged(){
+        return this.lH.isBusquedaChanged();
     }
 
     /**

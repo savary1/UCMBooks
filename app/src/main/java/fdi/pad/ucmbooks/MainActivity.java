@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -35,6 +36,7 @@ import org.xml.sax.SAXException;
 
 import fdi.pad.about.AboutActivity;
 import fdi.pad.clearData.ClearDataActivity;
+import fdi.pad.libro.Libro;
 import fdi.pad.libro.LibroExecutor;
 
 
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         @Override
         public boolean onQueryTextSubmit(String query) {
             searchOnline(query);
-            return false;
+            return true;
         }
 
         @Override
@@ -134,8 +136,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        this.libreria.setLista(libros);
-        this.leidos.setLista(libros);
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, this.libreria).commit();
 
@@ -240,6 +240,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void searchNotifier(LibroExecutor results){
-        buscar.refreshList(results);
+        buscar.refreshList();
     }
 }
