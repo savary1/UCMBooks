@@ -21,7 +21,6 @@ public class LibroExecutor {
     /**
      * Añade un libro a la lista de seguidos con imagen asociada a él y lo guarda en memoria
      * Después lo guarda
-     * @param context Contexto
      * @param titulo Título del libro
      * @param idLibro ID asociada al libro. Valor único
      * @param autor Autor del libro
@@ -31,9 +30,9 @@ public class LibroExecutor {
      * @param imageURL URL de la imagen. Obtenida de la API
      * @return Devuelve verdadero si el libro se ha añadido y guardado correctamente. Falso en caso contrario
      */
-    public boolean addToSeguidos(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
+    public boolean addToSeguidos(String titulo, String idLibro, String autor, String idAutor, String rating,
                             Bitmap image, String imageURL) {
-        if(this.lH.addToSeguidos(context, titulo, idLibro, autor, idAutor, rating, image, imageURL))
+        if(this.lH.addToSeguidos(titulo, idLibro, autor, idAutor, rating, image, imageURL))
         {
             return this.lH.saveAll();
         }
@@ -48,7 +47,6 @@ public class LibroExecutor {
     /**
      * Añade un libro a la lista de leidos con imagen asociada a él y lo guarda en memoria
      * Después lo guarda
-     * @param context Contexto
      * @param titulo Título del libro
      * @param idLibro ID asociada al libro. Valor único
      * @param autor Autor del libro
@@ -58,9 +56,9 @@ public class LibroExecutor {
      * @param imageURL URL de la imagen. Obtenida de la API
      * @return Devuelve verdadero si el libro se ha añadido y guardado correctamente. Falso en caso contrario
      */
-    public boolean addToLeidos(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
+    public boolean addToLeidos(String titulo, String idLibro, String autor, String idAutor, String rating,
                                  Bitmap image, String imageURL) {
-        if(this.lH.addToLeidos(context, titulo, idLibro, autor, idAutor, rating, image, imageURL))
+        if(this.lH.addToLeidos(titulo, idLibro, autor, idAutor, rating, image, imageURL))
         {
             return this.lH.saveAll();
         }
@@ -75,7 +73,6 @@ public class LibroExecutor {
     /**
      * Añade un libro a la lista de busqueda con imagen asociada a él
      * Después lo guarda
-     * @param context Contexto
      * @param titulo Título del libro
      * @param idLibro ID asociada al libro. Valor único
      * @param autor Autor del libro
@@ -85,9 +82,9 @@ public class LibroExecutor {
      * @param imageURL URL de la imagen. Obtenida de la API
      * @return Devuelve verdadero si el libro se ha añadido y guardado correctamente. Falso en caso contrario
      */
-    public boolean addToBusqueda(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
+    public boolean addToBusqueda(String titulo, String idLibro, String autor, String idAutor, String rating,
                                Bitmap image, String imageURL) {
-        return this.lH.addToBusqueda(context, titulo, idLibro, autor, idAutor, rating, image, imageURL);
+        return this.lH.addToBusqueda(titulo, idLibro, autor, idAutor, rating, image, imageURL);
     }
 
     /**

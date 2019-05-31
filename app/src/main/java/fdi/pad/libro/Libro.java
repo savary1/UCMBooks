@@ -22,8 +22,6 @@ public class Libro implements java.io.Serializable {
     private String autor;
     /** ID del autor. Valor único */
     private String idAutor;
-    /** Nombre de la carpeta donde se va a guardar la imagen. No será la misma que la de esta clase (para no llenarla) */
-    private String imageFolder; //TODO Quitar este atributo si no es necesario
     /** URL de la imagen. Obtenido de la API */
     private String imageURL;
     /** Imagen en formato Bitmap */
@@ -38,7 +36,7 @@ public class Libro implements java.io.Serializable {
     /** Fecha en la que se marcó el libro como leído. La hora es indiferente */
     private String fechaLeido;
     /** Entero de 0 a 100 que refleja el porcentaje del libro que ha sido leído */
-    private int porcentajeLeido; //Se podría usar en el futuro //TODO ver esto. Si se usa, incluirlo en la carga y guardado
+    private int porcentajeLeido; //Se podría usar en el futuro
     /** Si está a True, "this" se guarda en el dispositivo. Si False, no se hace nada */
     private boolean seguido;
     /** Fecha en la que se dio a seguir al libro. La hora es indiferente */
@@ -48,28 +46,18 @@ public class Libro implements java.io.Serializable {
     /** Nota personal que el usuario ha dado al libro. Va de 1 a 10 */
     private Integer userRating;
 
-    /** Contexto */
-    private Context context;
 
-    /*
-    ****************************************************************************************************************
-    TODO Las pruebas necesarias para comprobar que todo funcione correctamente
-    TODO Borrado de comentarios si las imágenes se guardan bien con el sistema actual
-    ****************************************************************************************************************
-    */
 
     /**
      * Constructora general sin imagen asociada al libro.
      * No se indica si el libro se ha leído porque al agregarlo nunca se encuentra leído.
-     * @param context Contexto
      * @param titulo Título del libro
      * @param idLibro ID asociada al libro. Valor único
      * @param autor Autor del libro
      * @param idAutor ID asociada al autor. Valor único
      * @param rating Valoración del libro
      */
-    public Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating) {
-        this.context = context;
+    public Libro(String titulo, String idLibro, String autor, String idAutor, String rating) {
         this.titulo = titulo;
         this.idLibro = idLibro;
         this.autor = autor;
@@ -84,7 +72,6 @@ public class Libro implements java.io.Serializable {
     /**
      * Constructora general con imagen asociada al libro.
      * No se indica si el libro se ha leído porque al agregarlo nunca se encuentra leído.
-     * @param context Contexto
      * @param titulo Título del libro
      * @param idLibro ID asociada al libro. Valor único
      * @param autor Autor del libro
@@ -93,9 +80,8 @@ public class Libro implements java.io.Serializable {
      * @param image Imagen en formato Bitmap. Se pasa este parámetro para poder guardarla en el dispositivo
      * @param imageURL URL de la imagen. Obtenida de la API
      */
-    Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
+    Libro(String titulo, String idLibro, String autor, String idAutor, String rating,
           Bitmap image, String imageURL) {
-        this.context = context;
         this.titulo = titulo;
         this.idLibro = idLibro;
         this.autor = autor;
@@ -112,7 +98,6 @@ public class Libro implements java.io.Serializable {
         this.idLibro = l.getIdLibro();
         this.autor = l.getAutor();
         this.idAutor = l.getIdAutor();
-        this.imageFolder = l.imageFolder;
         this.imageURL = l.getImageURL();
         this.image = l.getImage();
         this.imageLoaded = l.getImageLoaded();
@@ -134,7 +119,6 @@ public class Libro implements java.io.Serializable {
         this.fechaSeguido = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         this.porcentajeLeido = 0;
         this.seguido = false;
-        this.imageFolder = "/Bookimages"; //TODO Quitar carpeta de imágenes si se visualizan correctamente con el sistema del Handler
         this.userRating = null;
         this.userReview = "";
     }
@@ -194,7 +178,6 @@ public class Libro implements java.io.Serializable {
 
     /**
      * Cuando se pulsa el botón de seguir libro, si ya estaba seguido se deja de seguir y si no, se sigue
-     * @return Verdadero si se ha seguido el libro, falso en caso contrario
      */
     public void  buttonSeguir() {
         seguirLibro();
@@ -243,10 +226,6 @@ public class Libro implements java.io.Serializable {
 
     void setFechaSeguido(String fechaSeguido) {
         this.fechaSeguido = fechaSeguido;
-    }
-
-    Context getContext() {
-        return context;
     }
 
     public String getTitulo() {

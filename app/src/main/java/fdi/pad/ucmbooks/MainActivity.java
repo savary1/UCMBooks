@@ -1,10 +1,7 @@
 package fdi.pad.ucmbooks;
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import java.lang.ref.WeakReference;
 
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -19,19 +16,6 @@ import android.content.Context;
 import android.support.v7.widget.SearchView;
 
 import android.support.annotation.NonNull;
-
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import fdi.pad.about.AboutActivity;
 import fdi.pad.clearData.ClearDataActivity;
@@ -62,79 +46,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private class OnQueryTextListener implements SearchView.OnQueryTextListener{
         @Override
         public boolean onQueryTextSubmit(String query) {
-            searchOnline(query);
+            buscar.refreshList(query);
             return true;
         }
 
         @Override
         public boolean onQueryTextChange(String newText) {
             return false;
-        }
-    }
-
-    /**
-     * Clase que implementa la busqueda en segundo plano
-     */
-    private static class AsyncServerRequest extends AsyncTask<String, Void, LibroExecutor> {
-        private WeakReference<MainActivity> activityReference;
-
-        AsyncServerRequest(MainActivity context){
-            activityReference = new WeakReference<>(context);
-        }
-
-        /**
-         * Realiza una búsuqeda en segundo plano
-         * @param search palabras claves de la búsqueda
-         * @return  resultado de la busqueda
-         */
-        @Override
-        public LibroExecutor doInBackground(String... search){
-
-            LibroExecutor libros = activityReference.get().libros;
-            libros.deleteAllFromBusqueda();
-            String apiKey = "ZjAhPX6VC8YMHCZIO5w6g";
-            String urlText = "https://www.goodreads.com/search.xml?key=" + apiKey + "&q=" + search[0];
-
-            try {
-
-                URL url = new URL(urlText);
-                URLConnection conn = url.openConnection();
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder builder = factory.newDocumentBuilder();
-                Document doc = builder.parse(conn.getInputStream());
-                NodeList nodes = doc.getElementsByTagName("work");
-                for (int i = 0; i < nodes.getLength() && i < 10; i++) {
-                    Element entry = (Element) nodes.item(i);
-                    NodeList tmp = entry.getElementsByTagName("best_book");
-                    Element entryLibro = (Element) tmp.item(0);
-                    tmp = entryLibro.getElementsByTagName("author");
-                    Element entryAutor = (Element) tmp.item(0);
-                    libros.addToBusqueda(
-                            mainContext,
-                            entryLibro.getElementsByTagName("title").item(0).getTextContent(),
-                            entryLibro.getElementsByTagName("id").item(0).getTextContent(),
-                            entryAutor.getElementsByTagName("name").item(0).getTextContent(),
-                            entryAutor.getElementsByTagName("id").item(0).getTextContent(),
-                            entry.getElementsByTagName("average_rating").item(0).getTextContent(),
-                            BitmapFactory.decodeStream(new URL(entryLibro.getElementsByTagName("image_url").item(0).getTextContent()).openConnection().getInputStream()),
-                            entryLibro.getElementsByTagName("image_url").item(0).getTextContent()
-                    );
-                }
-            } catch (IOException | ParserConfigurationException | SAXException e){
-                e.printStackTrace();
-            }
-            return libros;
-        }
-
-        /**
-         * Llamado tras la búsqueda. Notifica del resultado a la MainActivity
-         * @param v resultado de la busqueda
-         */
-        @Override
-        protected void onPostExecute(LibroExecutor v) {
-            MainActivity activity = activityReference.get();
-            if(activity == null || activity.isFinishing()) return;
-            activity.searchNotifier(v);
         }
     }
 
@@ -258,22 +176,5 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             startActivity(intent);
         }
         return true;
-    }
-
-    /**
-     * Ejecuta en segundo plano una búsqueda de libros con las palabras indicadas. Actualiza la lista de buscados en el LibroExecutor
-     * @param query palabas clave de la búsqueda
-     */
-    private void searchOnline(String query){
-        AsyncServerRequest request = new AsyncServerRequest(this);
-        request.execute(query);
-    }
-
-    /**
-     * Indica al fragment Buscar que los resultados de una búsuqeda están listos
-     * @param results resultado de la busqueda
-     */
-    private void searchNotifier(LibroExecutor results){
-        buscar.refreshList();
     }
 }

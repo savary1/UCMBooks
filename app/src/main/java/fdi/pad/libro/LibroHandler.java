@@ -54,7 +54,6 @@ class LibroHandler implements java.io.Serializable {
 
     /**
      * Añade un libro a la lista de seguidos con imagen asociada a él
-     * @param context Contexto
      * @param titulo Título del libro
      * @param idLibro ID asociada al libro. Valor único
      * @param autor Autor del libro
@@ -63,9 +62,9 @@ class LibroHandler implements java.io.Serializable {
      * @param image Imagen en formato Bitmap. Se pasa este parámetro para poder guardarla en el dispositivo
      * @param imageURL URL de la imagen. Obtenida de la API
      */
-    boolean addToSeguidos(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
+    boolean addToSeguidos(String titulo, String idLibro, String autor, String idAutor, String rating,
                           Bitmap image, String imageURL) {
-        seguidos.add(new Libro(context, titulo, idLibro, autor, idAutor, rating, image, imageURL));
+        seguidos.add(new Libro(titulo, idLibro, autor, idAutor, rating, image, imageURL));
         seguidosChange = true;
         return seguidos.get(seguidos.size() - 1).getIdLibro().equals(idLibro);
     }
@@ -105,7 +104,6 @@ class LibroHandler implements java.io.Serializable {
 
     /**
      * Añade un libro a la lista de leidos con imagen asociada a él
-     * @param context Contexto
      * @param titulo Título del libro
      * @param idLibro ID asociada al libro. Valor único
      * @param autor Autor del libro
@@ -114,9 +112,9 @@ class LibroHandler implements java.io.Serializable {
      * @param image Imagen en formato Bitmap. Se pasa este parámetro para poder guardarla en el dispositivo
      * @param imageURL URL de la imagen. Obtenida de la API
      */
-    boolean addToLeidos(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
+    boolean addToLeidos(String titulo, String idLibro, String autor, String idAutor, String rating,
                           Bitmap image, String imageURL) {
-        leidos.add(new Libro(context, titulo, idLibro, autor, idAutor, rating, image, imageURL));
+        leidos.add(new Libro(titulo, idLibro, autor, idAutor, rating, image, imageURL));
         leidosChange = true;
         return leidos.get(leidos.size() - 1).getIdLibro().equals(idLibro);
     }
@@ -156,7 +154,6 @@ class LibroHandler implements java.io.Serializable {
 
     /**
      * Añade un libro a la lista de busqueda con imagen asociada a él
-     * @param context Contexto
      * @param titulo Título del libro
      * @param idLibro ID asociada al libro. Valor único
      * @param autor Autor del libro
@@ -165,9 +162,9 @@ class LibroHandler implements java.io.Serializable {
      * @param image Imagen en formato Bitmap. Se pasa este parámetro para poder guardarla en el dispositivo
      * @param imageURL URL de la imagen. Obtenida de la API
      */
-    boolean addToBusqueda(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
+    boolean addToBusqueda(String titulo, String idLibro, String autor, String idAutor, String rating,
                         Bitmap image, String imageURL) {
-        busqueda.add(new Libro(context, titulo, idLibro, autor, idAutor, rating, image, imageURL));
+        busqueda.add(new Libro(titulo, idLibro, autor, idAutor, rating, image, imageURL));
         busquedaChange = true;
         return busqueda.get(busqueda.size() - 1).getIdLibro().equals(idLibro);
     }
@@ -191,7 +188,7 @@ class LibroHandler implements java.io.Serializable {
     }
 
     /**
-     * Guarda los datos de un libro en la memoria interna del teléfono //TODO Borrado de este método si la nueva forma de guarado funciona
+     * Guarda los datos de un libro en la memoria interna del teléfono
      * @param oos ObjectOutputStream
      * @param libro libro que hay que guardar
      * @return Ddevuelve verdadero si el libro se ha guardado correctamente, falso en caso contrario
@@ -355,7 +352,7 @@ class LibroHandler implements java.io.Serializable {
 
                 //Añadimos el libro
                 if(leido){
-                    addToLeidos(this.context, titulo, idLibro, autor, idAutor, rating, image, imageURL);
+                    addToLeidos(titulo, idLibro, autor, idAutor, rating, image, imageURL);
                     leidos.get(leidos.size() - 1).buttonSeguir();
                     leidos.get(leidos.size() - 1).libroLeido(fechaLeido);
                     leidos.get(leidos.size() - 1).makeReview(review);
@@ -363,7 +360,7 @@ class LibroHandler implements java.io.Serializable {
                     leidos.get(leidos.size() - 1).setFechaSeguido(fechaSeguido);
                 }
                 else{
-                    addToSeguidos(this.context, titulo, idLibro, autor, idAutor, rating, image, imageURL);
+                    addToSeguidos(titulo, idLibro, autor, idAutor, rating, image, imageURL);
                     seguidos.get(seguidos.size() - 1).buttonSeguir();
                     seguidos.get(seguidos.size() - 1).setFechaSeguido(fechaSeguido);
                 }
