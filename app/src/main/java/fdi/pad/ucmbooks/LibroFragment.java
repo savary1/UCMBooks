@@ -1,7 +1,10 @@
 package fdi.pad.ucmbooks;
 
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -12,7 +15,18 @@ import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import fdi.pad.libro.Libro;
 import fdi.pad.libro.LibroExecutor;
@@ -59,10 +73,39 @@ public class LibroFragment extends Fragment {
                 "</head>\n" +
                 "<center> <img src = '{IMAGE_PLACEHOLDER}' /> </center>";
 
+
+        if(this.networkAvailable()) {
+            String apiKey = "ZjAhPX6VC8YMHCZIO5w6g";
+            String urlText = "https://www.goodreads.com/book/show/" + this.libro.getIdLibro() + ".xml?key=" + apiKey;
+
+            try {
+
+                URL url = new URL(urlText);
+                URLConnection conn = url.openConnection();
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                Document doc = builder.parse(conn.getInputStream());
+                NodeList nodes = doc.getElementsByTagName("description");
+                String descripcion = nodes.item(0).getTextContent();
+                nodes = doc.getElementsByTagName("reviews_widget");
+                String reviews = nodes.item(0).getTextContent();
+
+                html += "<foot>" +
+                        "<p> <font color=#95A5A6>Descripcion:</font> </p>\n" +
+                        "<p> <font color=#95A5A6>" + descripcion + "</font> </p>\n" +
+                        "</foot>";
+
+                html += reviews;
+            } catch (IOException | ParserConfigurationException | SAXException e){
+                e.printStackTrace();
+            }
+        }
+
         html += "<foot>" +
                 "<p> <font color=#95A5A6>ID del libro:" + this.libro.getIdLibro() + "</font> </p>\n" +
                 "<p> <font color=#95A5A6>ID del autor:" + this.libro.getIdAutor() + "</font> </p>\n" +
                 "</foot>";
+
 
         html += "<script>" +
                 "function goBackScript() {" +
@@ -170,6 +213,16 @@ public class LibroFragment extends Fragment {
             this.libros.deleteFromLeidos(libro.getIdLibro());
             this.libros.addToSeguidos(this.libro);
         }
+    }
+
+    /**
+     * Comprueba si el terminal está conectado a la red
+     * @return true si está conectado a la red
+     */
+    private boolean networkAvailable(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 }
