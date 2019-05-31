@@ -231,7 +231,7 @@ public class Libro implements java.io.Serializable {
      * Primero se borra de la memoria interna, si es que no hay ningún fallo, y después se actualiza el valor de seguido
      * @return Verdadero si el libro se ha borrado y dejado de seguir correctamente, falso en caso contrario
      */
-    private boolean dejarDeSeguirLibro() {
+    public boolean dejarDeSeguirLibro() {
         if(this.seguido) {
             /*if(!deleteBook())
                 return false; //Si no se ha borrado el libro, devuelve falso*/
@@ -284,11 +284,11 @@ public class Libro implements java.io.Serializable {
         return idLibro;
     }
 
-    String getIdAutor() {
+    public String getIdAutor() {
         return idAutor;
     }
 
-    String getRating() {
+    public String getRating() {
         return rating;
     }
 

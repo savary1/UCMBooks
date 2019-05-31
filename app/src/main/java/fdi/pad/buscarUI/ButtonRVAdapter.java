@@ -1,6 +1,7 @@
 package fdi.pad.buscarUI;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import java.util.Locale;
 
 import fdi.pad.libro.Libro;
 import fdi.pad.libro.LibroExecutor;
+import fdi.pad.ucmbooks.LibroFragment;
 import fdi.pad.ucmbooks.MainActivity;
 import fdi.pad.ucmbooks.R;
 
@@ -45,6 +47,7 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
 
     private LibroExecutor libros = new LibroExecutor(MainActivity.mainContext);
     private TIPO_BRVA tipo;
+    LibroFragment lF;
 
     public ButtonRVAdapter (TIPO_BRVA tipo){
         this.tipo = tipo;
@@ -86,10 +89,9 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
 
             @Override
             public void onClick(View v) {
-            /*
-            TODO Poner aki el kodigo de lanzar la viu del book
-             */
-                System.out.println("Click en libro: " + l.getTitulo());
+                lF = new LibroFragment();
+                lF.setList(l);
+                switchContent(R.id.fragment_container, lF);
             }
         });
         bookViewHolder.boton.setOnClickListener(new View.OnClickListener(){
@@ -108,6 +110,16 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
                 notifyDataSetChanged();
             }
         });
+    }
+
+    public void switchContent(int id, Fragment fragment) {
+        if (MainActivity.mainContext == null)
+            return;
+        if (MainActivity.mainContext instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) MainActivity.mainContext;
+            mainActivity.switchWebViewFragment(id, fragment);
+        }
+
     }
 
     @Override

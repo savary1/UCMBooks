@@ -2,6 +2,7 @@ package fdi.pad.buscarUI;
 
 import java.util.ArrayList;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 
 import fdi.pad.libro.LibroExecutor;
+import fdi.pad.ucmbooks.LibroFragment;
 import fdi.pad.ucmbooks.MainActivity;
 import fdi.pad.ucmbooks.R;
 
@@ -32,6 +34,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
     }
 
     private LibroExecutor libros = new LibroExecutor(MainActivity.mainContext);
+    LibroFragment lF;
 
     @Override
     public int getItemCount() {
@@ -48,7 +51,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(BookViewHolder bookViewHolder, final int i) {
+    public void onBindViewHolder(BookViewHolder bookViewHolder, int i) {
+        final int index = i;
         bookViewHolder.bookTitle.setText(libros.getFromLeidos(i).getTitulo());
         bookViewHolder.bookAuthor.setText(libros.getFromLeidos(i).getAutor());
         bookViewHolder.bookCover.setImageBitmap(libros.getFromLeidos(i).getImage());
@@ -56,12 +60,21 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
 
             @Override
             public void onClick(View v) {
-            /*
-            TODO Poner aki el kodigo de lanzar la viu del book
-             */
-            System.out.println("Click en libro: " + libros.getFromLeidos(i).getTitulo());
+                lF = new LibroFragment();
+                lF.setList(libros.getFromLeidos(index));
+                switchContent(R.id.fragment_container, lF);
             }
         });
+    }
+
+    public void switchContent(int id, Fragment fragment) {
+        if (MainActivity.mainContext == null)
+            return;
+        if (MainActivity.mainContext instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) MainActivity.mainContext;
+            mainActivity.switchWebViewFragment(id, fragment);
+        }
+
     }
 
     @Override
