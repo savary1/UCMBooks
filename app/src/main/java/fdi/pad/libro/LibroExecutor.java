@@ -2,8 +2,6 @@ package fdi.pad.libro;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Environment;
-import android.webkit.JavascriptInterface;
 
 import java.util.ArrayList;
 
@@ -275,92 +273,5 @@ public class LibroExecutor {
     public boolean isBusquedaChanged(){
         return this.lH.isBusquedaChanged();
     }
-
-    /**
-     * Cuando se pulsa el botón de seguir libro, si ya estaba seguido se deja de seguir y si no, se sigue
-     * Después guarda el libro en cualquier caso
-     * @return Verdadero si se ha seguido el libro, falso si se ha dejado de seguir
-     */
-    /*
-    public boolean buttonSeguir(String id) {
-        //Se ha seguido. Trivial. El libro guardado siempre está seguido
-        if (this.lH.getLibro(getIndex(id)).buttonSeguir()) {
-            saveAll();
-            return true;
-        }
-        //Se ha dejado de seguir
-        else {
-            this.lH.deleteLibro(id);
-            saveAll();
-            return false;
-        }
-    }
-    */
-
-    /**
-     * Llama al libro correspondiente según la ID para establecer una valoración del 0 al 10
-     * @param id ID única del libro sobre el que se quiere realizar la valoración
-     * @param userRating Nota que el usuario da a ese libro
-     * @return Devuelve verdadero si la nota es válida, falso en caso contrario
-     */
-    /*
-    public boolean stablishRating(String id, int userRating) { return this.lH.getLibro(getIndex(id)).stablishRating(userRating); }
-    */
-
-    /**
-     * Realiza una reseña sobre el libro correspondiente a la ID
-     * @param id ID única del libro sobre el que se quiere realizar al reseña
-     * @param userReview La reseña propiamente dicha. El control de la longitud del campo lo realiza la propia interfaz de Android
-     */
-    /*
-    public void makeReview(String id, String userReview) { this.lH.getLibro(getIndex(id)).makeReview(userReview); }
-    */
-    /*
-
-    //TODO Poner aquí todos los getters de los libros no creo que sea muy correcto. Convendría buscar otra manera
-    public Libro getLibro(int i) { return this.lH.getLibro(i); }
-
-    public Context getContext(String id) { return this.lH.getLibro(getIndex(id)).getContext(); }
-
-    @JavascriptInterface
-    public String getTitulo(String id) { return this.lH.getLibro(getIndex(id)).getTitulo(); }
-
-    public String getIdLibro(String id) { return this.lH.getLibro(getIndex(id)).getIdLibro(); }
-
-    @JavascriptInterface
-    public String getAutor(String id) { return this.lH.getLibro(getIndex(id)).getAutor(); }
-
-    public String getIdAutor(String id) { return this.lH.getLibro(getIndex(id)).getIdAutor(); }
-
-    @JavascriptInterface
-    public String getRating(String id) { return this.lH.getLibro(getIndex(id)).getRating(); }
-
-    @JavascriptInterface
-    public Bitmap getImage(String id) { return this.lH.getLibro(getIndex(id)).getImage(); }
-
-    public String getImageURL(String id) { return this.lH.getLibro(getIndex(id)).getImageURL(); }
-
-    public ArrayList<Libro> getListaLibros() { return this.lH.getListaLibros(); }
-
-    public String getId(int i) { return this.lH.getId(i); }
-
-    public int getIndex(String id) { return this.lH.getIndex(id); }
-
-    public ArrayList<String> getAllId() { return this.lH.getAllId(); }
-
-    public boolean isLibroSeguido(String id) { return this.lH.isLibroSeguido(id); }
-
-    @JavascriptInterface
-    public String getFechaSeguido(String id) { return this.lH.getFechaSeguido(id); }
-
-    public boolean isLibroLeido(String id) { return this.lH.isLibroLeido(id); }
-
-    @JavascriptInterface
-    public String getFechaLeido(String id) { return this.lH.getFechaLeido(id); }
-
-    public ArrayList<Libro> getLibrosSeguidos() { return this.lH.getLibrosSeguidos(); }
-
-    public ArrayList<Libro> getLibrosLeidos() { return this.lH.getLibrosLeidos(); }
-    */
 
 }

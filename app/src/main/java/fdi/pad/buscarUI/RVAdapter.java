@@ -2,6 +2,7 @@ package fdi.pad.buscarUI;
 
 import java.util.ArrayList;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -26,15 +27,14 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
 
         BookViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.book_view);
-            bookTitle = (TextView)itemView.findViewById(R.id.book_title);
-            bookAuthor = (TextView)itemView.findViewById(R.id.book_author);
-            bookCover = (ImageView)itemView.findViewById(R.id.cover_photo);
+            cv = itemView.findViewById(R.id.book_view);
+            bookTitle = itemView.findViewById(R.id.book_title);
+            bookAuthor = itemView.findViewById(R.id.book_author);
+            bookCover = itemView.findViewById(R.id.cover_photo);
         }
     }
 
     private LibroExecutor libros = new LibroExecutor(MainActivity.mainContext);
-    LibroFragment lF;
 
     @Override
     public int getItemCount() {
@@ -44,14 +44,14 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
     }
 
     @Override
-    public BookViewHolder onCreateViewHolder(ViewGroup viewGroup, final int i) {
+    @NonNull
+    public BookViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, final int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.book_card_view, viewGroup, false);
-        BookViewHolder pvh = new BookViewHolder(v);
-        return pvh;
+        return new BookViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(BookViewHolder bookViewHolder, int i) {
+    public void onBindViewHolder(@NonNull BookViewHolder bookViewHolder, int i) {
         final int index = i;
         bookViewHolder.bookTitle.setText(libros.getFromLeidos(i).getTitulo());
         bookViewHolder.bookAuthor.setText(libros.getFromLeidos(i).getAutor());
@@ -60,14 +60,18 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
 
             @Override
             public void onClick(View v) {
-                lF = new LibroFragment();
+                LibroFragment lF = new LibroFragment();
                 lF.setList(libros.getFromLeidos(index));
                 switchContent(R.id.fragment_container, lF);
             }
         });
     }
-
-    public void switchContent(int id, Fragment fragment) {
+    /**
+     * Cambia el fragment que se muesta en la MainActivity
+     * @param id    contenedor del fragment en el que se quiere mostrat
+     * @param fragment  fragment que se quiere mostrar
+     */
+    private void switchContent(int id, Fragment fragment) {
         if (MainActivity.mainContext == null)
             return;
         if (MainActivity.mainContext instanceof MainActivity) {
@@ -78,7 +82,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.BookViewHolder>{
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
 }

@@ -2,18 +2,7 @@ package fdi.pad.libro;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Environment;
-import android.text.format.DateFormat;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -104,7 +93,7 @@ public class Libro implements java.io.Serializable {
      * @param image Imagen en formato Bitmap. Se pasa este parámetro para poder guardarla en el dispositivo
      * @param imageURL URL de la imagen. Obtenida de la API
      */
-    public Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
+    Libro(Context context, String titulo, String idLibro, String autor, String idAutor, String rating,
           Bitmap image, String imageURL) {
         this.context = context;
         this.titulo = titulo;
@@ -165,7 +154,7 @@ public class Libro implements java.io.Serializable {
      * Si un libro se ha leído, se pone a true el atributo y a 100 el porcentaje leído. La fecha se actualiza según el parámetro
      * @param fechaLeido Fecha en la que el libro fue leído
      */
-    public void libroLeido(String fechaLeido) {
+    void libroLeido(String fechaLeido) {
         if(this.seguido) {
             this.leido = true;
             this.porcentajeLeido = 100;
@@ -207,8 +196,8 @@ public class Libro implements java.io.Serializable {
      * Cuando se pulsa el botón de seguir libro, si ya estaba seguido se deja de seguir y si no, se sigue
      * @return Verdadero si se ha seguido el libro, falso en caso contrario
      */
-    public boolean buttonSeguir() {
-        return seguirLibro();
+    public void  buttonSeguir() {
+        seguirLibro();
     }
 
     /**
@@ -272,7 +261,7 @@ public class Libro implements java.io.Serializable {
         return leido;
     }
 
-    int getPorcentajeLeido() {
+    private int getPorcentajeLeido() {
         return porcentajeLeido;
     }
 
@@ -300,7 +289,7 @@ public class Libro implements java.io.Serializable {
         return image;
     }
 
-    Boolean getImageLoaded() {
+    private Boolean getImageLoaded() {
         return imageLoaded;
     }
 

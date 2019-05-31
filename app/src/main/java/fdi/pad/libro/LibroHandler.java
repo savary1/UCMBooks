@@ -3,7 +3,6 @@ package fdi.pad.libro;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
@@ -16,7 +15,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -178,7 +176,7 @@ class LibroHandler implements java.io.Serializable {
      * Sustituye la lista de busqueda
      * @param libros lista nueva
      */
-    public void setBusqueda(ArrayList<Libro> libros){
+    void setBusqueda(ArrayList<Libro> libros){
         busqueda = libros;
         busquedaChange = true;
     }
@@ -210,7 +208,7 @@ class LibroHandler implements java.io.Serializable {
                 //Este pedazo de código de aquí es para guardar las imágenes. No se puede hacer directamente
                 ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
                 libro.getImage().compress(Bitmap.CompressFormat.PNG, 0, byteStream);
-                byte bitmapBytes[] = byteStream.toByteArray();
+                byte[] bitmapBytes = byteStream.toByteArray();
                 oos.write(bitmapBytes, 0, bitmapBytes.length);
             }
             else
@@ -346,7 +344,7 @@ class LibroHandler implements java.io.Serializable {
                 int b;
                 while((b = ois.read()) != -1)
                     byteStream.write(b);
-                byte bitmapBytes[] = byteStream.toByteArray();
+                byte[] bitmapBytes = byteStream.toByteArray();
                 Bitmap image = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
                 String rating = (String)ois.readObject();
                 String fechaSeguido = (String)ois.readObject();
@@ -552,15 +550,15 @@ class LibroHandler implements java.io.Serializable {
         return new Libro(busqueda.get(i));
     }
 
-    public boolean isSeguidosChanged(){
+    boolean isSeguidosChanged(){
         return seguidosChange;
     }
 
-    public boolean isLeidosChanged(){
+    boolean isLeidosChanged(){
         return leidosChange;
     }
 
-    public boolean isBusquedaChanged(){
+    boolean isBusquedaChanged(){
         return busquedaChange;
     }
 

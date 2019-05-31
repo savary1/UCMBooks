@@ -3,6 +3,7 @@ package fdi.pad.ucmbooks;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -10,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 
@@ -23,7 +22,6 @@ import fdi.pad.libro.LibroExecutor;
  */
 public class LibroFragment extends Fragment {
 
-    String fileName = "LibroView.html";
     WebView webView;
     Libro libro;
     LibroExecutor libros = new LibroExecutor(MainActivity.mainContext);
@@ -37,19 +35,16 @@ public class LibroFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_libro, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        webView = (WebView)view.findViewById(R.id.LibroWebView);
-        //webView.loadUrl("file:///android_asset/" + fileName);
-        String html = "";
-        //this.libro.buttonSeguir(libro.getId(this.libroIndex));
+        webView = view.findViewById(R.id.LibroWebView);
 
-        html = "<!DOCTYPE html>\n" +
+        String html = "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "<body style=\"background-color:#F2F4F4;\"></body>" +
                 "<head>\n" +
@@ -160,6 +155,11 @@ public class LibroFragment extends Fragment {
             this.libro.libroLeido();
             this.libros.deleteFromSeguidos(this.libro.getIdLibro());
             this.libros.addToLeidos(this.libro);
+        }
+        else{
+            this.libro.dejarDeSeguirLibro();
+            this.libros.deleteFromLeidos(libro.getIdLibro());
+            this.libros.addToSeguidos(this.libro);
         }
     }
 

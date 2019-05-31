@@ -11,11 +11,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-
 import fdi.pad.libro.Libro;
 import fdi.pad.libro.LibroExecutor;
 import fdi.pad.ucmbooks.LibroFragment;
@@ -24,7 +19,7 @@ import fdi.pad.ucmbooks.R;
 
 public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.ButtonBookViewHolder> {
 
-    public static class ButtonBookViewHolder extends RecyclerView.ViewHolder {
+    static class ButtonBookViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         TextView bookTitle;
         TextView bookAuthor;
@@ -33,11 +28,11 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
 
         ButtonBookViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.book_view);
-            bookTitle = (TextView)itemView.findViewById(R.id.book_title);
-            bookAuthor = (TextView)itemView.findViewById(R.id.book_author);
-            bookCover = (ImageView)itemView.findViewById(R.id.cover_photo);
-            boton = (Button) itemView.findViewById(R.id.seguir_button);
+            cv = itemView.findViewById(R.id.book_view);
+            bookTitle = itemView.findViewById(R.id.book_title);
+            bookAuthor = itemView.findViewById(R.id.book_author);
+            bookCover = itemView.findViewById(R.id.cover_photo);
+            boton = itemView.findViewById(R.id.seguir_button);
         }
     }
 
@@ -46,8 +41,10 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
     }
 
     private LibroExecutor libros = new LibroExecutor(MainActivity.mainContext);
+    /**
+     *Indica si se trata de un adaptador que muestra libros seguidos o libros que se han buscado
+     */
     private TIPO_BRVA tipo;
-    LibroFragment lF;
 
     public ButtonRVAdapter (TIPO_BRVA tipo){
         this.tipo = tipo;
@@ -68,13 +65,11 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
                 v = null;
                 break;
         }
-        ButtonRVAdapter.ButtonBookViewHolder pvh = new ButtonRVAdapter.ButtonBookViewHolder(v);
-        return pvh;
+        return  new ButtonRVAdapter.ButtonBookViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ButtonRVAdapter.ButtonBookViewHolder bookViewHolder, int i) {
-        final int index = i;
         final Libro l;
         if(tipo == TIPO_BRVA.SEGUIDO){
             l = libros.getFromSeguidos(i);
@@ -89,7 +84,7 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
 
             @Override
             public void onClick(View v) {
-                lF = new LibroFragment();
+                LibroFragment lF = new LibroFragment();
                 lF.setList(l);
                 switchContent(R.id.fragment_container, lF);
             }
@@ -112,7 +107,12 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
         });
     }
 
-    public void switchContent(int id, Fragment fragment) {
+    /**
+     * Cambia el fragment que se muesta en la MainActivity
+     * @param id    contenedor del fragment en el que se quiere mostrat
+     * @param fragment  fragment que se quiere mostrar
+     */
+    private void switchContent(int id, Fragment fragment) {
         if (MainActivity.mainContext == null)
             return;
         if (MainActivity.mainContext instanceof MainActivity) {
@@ -133,7 +133,7 @@ public class ButtonRVAdapter extends RecyclerView.Adapter<ButtonRVAdapter.Button
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
 }

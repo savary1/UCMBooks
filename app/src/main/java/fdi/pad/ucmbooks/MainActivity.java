@@ -23,7 +23,6 @@ import android.support.annotation.NonNull;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -36,7 +35,6 @@ import org.xml.sax.SAXException;
 
 import fdi.pad.about.AboutActivity;
 import fdi.pad.clearData.ClearDataActivity;
-import fdi.pad.libro.Libro;
 import fdi.pad.libro.LibroExecutor;
 
 
@@ -49,14 +47,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private LibroExecutor libros = new LibroExecutor(this);
     public static Context mainContext;
 
-    private boolean dataErrased = false;
-
+    /**
+     * Indica el tipo de fragmento accesible desde la navBar inferior de la aplicación
+     */
     private enum FR_TYPE{
         LIBRERIA, BUSCAR, LEIDOS
     }
 
     FR_TYPE currentFragment = FR_TYPE.LIBRERIA;
 
+    /**
+     * Clase que implementa el listener de la caja de búsqueda
+     */
     private class OnQueryTextListener implements SearchView.OnQueryTextListener{
         @Override
         public boolean onQueryTextSubmit(String query) {
@@ -70,12 +72,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
+    /**
+     * Clase que implementa la busqueda en segundo plano
+     */
     private static class AsyncServerRequest extends AsyncTask<String, Void, LibroExecutor> {
         private WeakReference<MainActivity> activityReference;
 
         AsyncServerRequest(MainActivity context){
             activityReference = new WeakReference<>(context);
         }
+
+        /**
+         * Realiza una búsuqeda en segundo plano
+         * @param search palabras claves de la búsqueda
+         * @return  resultado de la busqueda
+         */
         @Override
         public LibroExecutor doInBackground(String... search){
 
@@ -99,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     tmp = entryLibro.getElementsByTagName("author");
                     Element entryAutor = (Element) tmp.item(0);
                     libros.addToBusqueda(
-                            mainContext, //Funciona?
+                            mainContext,
                             entryLibro.getElementsByTagName("title").item(0).getTextContent(),
                             entryLibro.getElementsByTagName("id").item(0).getTextContent(),
                             entryAutor.getElementsByTagName("name").item(0).getTextContent(),
@@ -115,6 +126,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             return libros;
         }
 
+        /**
+         * Llamado tras la búsqueda. Notifica del resultado a la MainActivity
+         * @param v resultado de la busqueda
+         */
         @Override
         protected void onPostExecute(LibroExecutor v) {
             MainActivity activity = activityReference.get();
@@ -134,45 +149,30 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         navView.setOnNavigationItemSelectedListener(this);
         mainContext = this;
         try {
-            libros.loadList();
+            libros.loadList();      //Carga la información de los libros almacenados en memoria
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, this.libreria).commit();
-
-        /*Para probar que el fragmento libreria funciona*/
-        /*Libro prueba = new Libro(this, "Titulo", "id", "Autor", "IDAutor", "Rating");
-        Libro prueba2 = new Libro(this, "Titulo2", "id2", "Autor2", "IDAutor2", "Rating2");
-        ArrayList<Libro> listaPrueba = new ArrayList<>();
-        listaPrueba.add(prueba);
-        listaPrueba.add(prueba2);
-        this.libreria.setLista(listaPrueba);
-        this.leidos.setLista(listaPrueba);*/ //TODO Quitar esto cuando no sean necesarias más pruebas
-        //getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, this.libreria).commit();
-
-        //Prueba de fragment de webview
-        /*setContentView(R.layout.fragment_libro);
-        LibroFragment libro = new LibroFragment();
-        LibroExecutor l = new LibroExecutor(mainContext);
-        l.addLibroSinImagen(mainContext, "patatas", "14", "JAVI", "19", "4");
-        libro.setLista(l);*/
     }
 
+    /**
+     * Incluye en la barra superior de la aplicación un campo de búsqueda
+     * @param menu layout de la caja de busqueda
+     * @return resultado de la operacion
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu, this adds items to the action bar if it is present.
 
             if(currentFragment == FR_TYPE.BUSCAR) {
                 MenuInflater inflater = getMenuInflater();
                 inflater.inflate(R.menu.search_menu, menu);
 
-                // Get the SearchView and set the searchable configuration
                 SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
                 SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-                // Assumes current activity is the searchable activity
                 searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-                searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+                searchView.setIconifiedByDefault(false);
                 searchView.setOnQueryTextListener(new OnQueryTextListener());
             }
             else {
@@ -183,8 +183,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return true;
     }
 
+    /**
+     * Intercambia y muestra el fragment de la MainActivity por el que se especifica
+     * @param fragment  fragment que se quiere mostrar
+     * @return resultado de la operación
+     */
     private boolean switchFragment(Fragment fragment) {
-        //switching fragment
         if (fragment != null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, fragment);
@@ -194,6 +198,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return false;
     }
 
+    /**
+     * Intercambia y muestra el fargment de la MainActivity y añade el anterior al stack de vistas
+     * @param fragment  fragmento que se quiere mostrar
+     */
     public void switchWebViewFragment(int id, Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(id, fragment);
@@ -201,7 +209,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         transaction.commit();
     }
 
-
+    /**
+     * Listener de la navbar inferior de la aplicación
+     * @param menuItem  opción que se ha pulsado
+     * @return  fragmento que se tiene que mostrar
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Fragment fragment = null;
@@ -228,6 +240,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return switchFragment(fragment);
     }
 
+    /**
+     * Listener del menú de la aplicación
+     * @param item  opción que s eha pulsado
+     * @return resultado de la operación
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if(item.getItemId() == R.id.menu_acercaDe){
@@ -238,17 +255,24 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         else if(item.getItemId() == R.id.menu_deleteData){
             System.out.println("Pulsado Borrar Datos");
             Intent intent= new Intent(this, ClearDataActivity.class);
-            this.dataErrased = true;
             startActivity(intent);
         }
         return true;
     }
 
+    /**
+     * Ejecuta en segundo plano una búsqueda de libros con las palabras indicadas. Actualiza la lista de buscados en el LibroExecutor
+     * @param query palabas clave de la búsqueda
+     */
     private void searchOnline(String query){
         AsyncServerRequest request = new AsyncServerRequest(this);
         request.execute(query);
     }
 
+    /**
+     * Indica al fragment Buscar que los resultados de una búsuqeda están listos
+     * @param results resultado de la busqueda
+     */
     private void searchNotifier(LibroExecutor results){
         buscar.refreshList();
     }
