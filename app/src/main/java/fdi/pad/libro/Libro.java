@@ -208,7 +208,7 @@ public class Libro implements java.io.Serializable {
      * @return Verdadero si se ha seguido el libro, falso en caso contrario
      */
     public boolean buttonSeguir() {
-        return !this.seguido ? seguirLibro() : dejarDeSeguirLibro();
+        return seguirLibro();
     }
 
     /**

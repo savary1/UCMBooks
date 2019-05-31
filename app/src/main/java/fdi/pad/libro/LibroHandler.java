@@ -358,6 +358,7 @@ class LibroHandler implements java.io.Serializable {
                 //Añadimos el libro
                 if(leido){
                     addToLeidos(this.context, titulo, idLibro, autor, idAutor, rating, image, imageURL);
+                    leidos.get(leidos.size() - 1).buttonSeguir();
                     leidos.get(leidos.size() - 1).libroLeido(fechaLeido);
                     leidos.get(leidos.size() - 1).makeReview(review);
                     leidos.get(leidos.size() - 1).stablishRating(userRating);
@@ -365,6 +366,7 @@ class LibroHandler implements java.io.Serializable {
                 }
                 else{
                     addToSeguidos(this.context, titulo, idLibro, autor, idAutor, rating, image, imageURL);
+                    seguidos.get(seguidos.size() - 1).buttonSeguir();
                     seguidos.get(seguidos.size() - 1).setFechaSeguido(fechaSeguido);
                 }
 

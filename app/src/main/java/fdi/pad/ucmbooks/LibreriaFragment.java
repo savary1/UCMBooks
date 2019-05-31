@@ -36,7 +36,7 @@ public class LibreriaFragment extends Fragment {
 
     public void refreshList(){
         RecyclerView rv = (RecyclerView) getView().findViewById(R.id.books_list_view);
-        ButtonRVAdapter adapter = new ButtonRVAdapter(ButtonRVAdapter.TIPO_BRVA.SEGUIDO);
+        ButtonRVAdapter adapter = new ButtonRVAdapter(ButtonRVAdapter.TIPO_BRVA.BUSCADO);
         rv.setAdapter(adapter);
     }
 

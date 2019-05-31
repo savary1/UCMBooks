@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private LibroExecutor libros = new LibroExecutor(this);
     public static Context mainContext;
 
+    private boolean dataErrased = false;
+
     private enum FR_TYPE{
         LIBRERIA, BUSCAR, LEIDOS
     }
@@ -229,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         else if(item.getItemId() == R.id.menu_deleteData){
             System.out.println("Pulsado Borrar Datos");
             Intent intent= new Intent(this, ClearDataActivity.class);
+            this.dataErrased = true;
             startActivity(intent);
         }
         return true;
