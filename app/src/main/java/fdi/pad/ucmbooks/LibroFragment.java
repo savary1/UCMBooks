@@ -187,7 +187,7 @@ public class LibroFragment extends Fragment {
         }
         else{
             this.libro.buttonSeguir();
-            this.libros.addToLeidos(libro);
+            this.libros.addToSeguidos(libro);
         }
     }
 
@@ -200,7 +200,7 @@ public class LibroFragment extends Fragment {
             this.libros.addToLeidos(this.libro);
         }
         else{
-            this.libro.dejarDeSeguirLibro();
+            this.libro.libroNoLeido();
             this.libros.deleteFromLeidos(libro.getIdLibro());
             this.libros.addToSeguidos(this.libro);
         }
@@ -209,7 +209,7 @@ public class LibroFragment extends Fragment {
     @JavascriptInterface
     public void libroNoLeido() {
         if(this.libro.isLeido()){
-            this.libro.dejarDeSeguirLibro();
+            this.libro.libroNoLeido();
             this.libros.deleteFromLeidos(libro.getIdLibro());
             this.libros.addToSeguidos(this.libro);
         }

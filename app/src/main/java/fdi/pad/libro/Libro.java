@@ -149,7 +149,7 @@ public class Libro implements java.io.Serializable {
     /**
      * Si un libro no se ha leído o se pone a false el atributo y a 0 el porcentaje leído
      */
-    void libroNoLeido() {
+    public void libroNoLeido() {
         if(this.seguido) {
             this.leido = false;
             this.porcentajeLeido = 0;
