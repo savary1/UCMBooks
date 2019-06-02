@@ -1,14 +1,19 @@
 <resources>
     <string name="app_name">UCMBooks</string>
-    <string name="title_libreria">Librería</string>
+    <string name="title_libreria">Libreria</string>
     <string name="title_buscar">Buscar</string>
     <string name="title_leidos">Leídos</string>
-    <string name="app_settings">Ajustes</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="hello_libreria_fragment">Hello libreria fragment</string>
-    <string name="hello_buscar_fragment">Hello buscar fragment</string>
-    <string name="hello_leidos_fragment">Hello leidos fragment</string>
+    <string name="app_info">Acerca de UCMBooks</string>
+    <string name="delete_data">Borrar datos</string>
+    <string name="about_the_app">UCMBooks es una aplicación que permite gestionar tus futuras lecturas y llevar un registro de tus libros acabados.\nFue creada como proyecto final de la asignatura Programación de aplicaciones para dispositivos móviles de la Facultad de Informática de la Universidad Complutense de Madrid.
+    \nToda la información se obtiene de Goodreads(https://www.goodreads.com)</string>
+    <string name="about_authors">Autores:</string>
+    <string name="about_david">David Savary Martínez</string>
+    <string name="about_javi">Javier Sanz Castro</string>
+    <string name="about_email_david">dsavary@ucm.es</string>
+    <string name="about_email_javi">jasanz03@ucm.es</string>
+    <string name="about_poweredBy">Implementado con Goodreads</string>
+    <string name="clear_data_text">Al pulsar sobre el botón Borrar Datos se eliminarán todos los libros seguidos y leidos. Estos libros no se podrán recuperar de ninguna manera.</string>
+    <string name="clear_data_button">Borrar datos</string>
 
 </resources>
